@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_slide">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_slide"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/taksim_logo4"
+        />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_slide"
+        android:layout_centerInParent="true"
+        android:id="@+id/frame4"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_safety_tutorial"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:id="@+id/izmir_icon4"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/izmir_icon4"
+            android:layout_centerHorizontal="true"
+            android:text="Güvenli yolculuğun tadını"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="20dp"
+            android:id="@+id/txt_title4"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_title4"
+            android:layout_centerHorizontal="true"
+            android:text="çıkarın!"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="5dp"
+            android:id="@+id/txt_title4_2"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_title4_2"
+            android:layout_centerHorizontal="true"
+            android:text="Taksinizi çağırın,ailecek güvenle ve"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="20dp"
+            android:id="@+id/txt_subtitle4_3"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_subtitle4_3"
+            android:layout_centerHorizontal="true"
+            android:text="kaliteli yolculuğun tadını çıkarın."
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="5dp"
+            android:id="@+id/txt_subtitle4_4"
+            />
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentLeft="true"
+        >
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_slide"
+            android:background="@null"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group4"
+        android:layout_below="@+id/frame4"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="30dp"
+        />
+
+
+</RelativeLayout>

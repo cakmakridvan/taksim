@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:id="@+id/item1" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_camera"
+            android:icon="@drawable/ic_profile"
+            android:title="Profilim"
+            />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_credit_card"
+            android:title="Kredi Kartlarım" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_home"
+            android:title="Adreslerim" />
+
+    </group>
+
+    <group android:id="@+id/item2" android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_bell"
+            android:title="Bildirimler" />
+
+        <item
+            android:id="@+id/nav_promosyon"
+            android:icon="@drawable/ic_present"
+            android:title="Promosyon" />
+
+        <item
+            android:id="@+id/nav_yolculuklar"
+            android:icon="@drawable/ic_list"
+            android:title="Yolculuklarım" />
+
+        <item
+            android:id="@+id/nav_yardim"
+            android:icon="@drawable/ic_help"
+            android:title="Yardım" />
+
+        <item
+            android:id="@+id/nav_sss"
+            android:icon="@drawable/ic_speech_bubble"
+            android:title="S.S.S" />
+
+    </group>
+
+    <group android:id="@+id/item3" android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/medya"
+            android:title="Bizi takip edin!"
+            />
+
+        <item
+        android:id="@+id/medya_icons"
+        android:title=""
+        />
+
+    </group>
+
+    <group android:id="@+id/item4" android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/exit"
+            android:title="Çıkış"
+            android:icon="@drawable/ic_exit"
+            />
+
+        <item
+            android:id="@+id/wave"
+            android:title=""
+            android:actionLayout="@layout/nav_bottom_layout"
+            />
+
+
+    </group>
+
+
+
+</menu>

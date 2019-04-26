@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_slide">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_slide"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/taksim_logo"
+        />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_slide"
+        android:layout_centerInParent="true"
+        android:id="@+id/frame1"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_izmir_tutorial"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:id="@+id/izmir_icon"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/izmir_icon"
+            android:layout_centerHorizontal="true"
+            android:text="Taksim İzmir'e Hoşgeldiniz!"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="20dp"
+            android:id="@+id/txt_title"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_title"
+            android:layout_centerHorizontal="true"
+            android:text="Güvenilir yolculuğun sırrını keşfedin."
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="20dp"
+            android:id="@+id/txt_subtitle"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_subtitle"
+            android:layout_centerHorizontal="true"
+            android:text="Bir Tık ile Taksim'i nasıl çağırırım?"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="5dp"
+            />
+
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group1"
+        android:layout_below="@+id/frame1"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="30dp"
+        />
+
+
+</RelativeLayout>
