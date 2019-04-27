@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".splash.Splash"
+            android:name=".ui.splash.Splash"
             android:label="Giriş"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -33,7 +33,7 @@
         </activity>
 
         <activity
-            android:name=".viewpager.ViewPager"
+            android:name=".ui.viewpager.ViewPager"
             android:label="@string/app_name"
             android:theme="@style/AppThemeNoAction">
             <intent-filter>
@@ -42,6 +42,24 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.logintype.MainType"
+            android:label="@string/app_name"
+            android:theme="@style/AppThemeNoAction">
+            <intent-filter>
+                <action android:name="android.intent.action.MAINTYPE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".ui.logintype.signup.SignUpPhone"
+            android:label="@string/app_name"
+            android:theme="@style/AppThemeNoAction"
+            ></activity>
 
     </application>
 

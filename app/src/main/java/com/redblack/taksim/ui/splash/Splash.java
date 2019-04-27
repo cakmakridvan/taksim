@@ -1,4 +1,4 @@
-package com.redblack.taksim.splash;
+package com.redblack.taksim.ui.splash;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,9 +6,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.redblack.taksim.Main;
 import com.redblack.taksim.R;
-import com.redblack.taksim.viewpager.ViewPager;
+import com.redblack.taksim.ui.viewpager.ViewPager;
 
 public class Splash extends AppCompatActivity {
 

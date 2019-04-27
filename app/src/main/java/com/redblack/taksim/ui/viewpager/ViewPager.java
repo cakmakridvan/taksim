@@ -1,4 +1,4 @@
-package com.redblack.taksim.viewpager;
+package com.redblack.taksim.ui.viewpager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,12 +11,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-
-import com.redblack.taksim.Main;
 import com.redblack.taksim.R;
 import com.redblack.taksim.adapters.ViewPagerAdapter;
-import com.redblack.taksim.utils.PreferenceManager;
+import com.redblack.taksim.ui.logintype.MainType;
+
 
 public class ViewPager extends AppCompatActivity implements View.OnClickListener {
 
@@ -96,8 +94,6 @@ public class ViewPager extends AppCompatActivity implements View.OnClickListener
     }
 
 
-
-
     @Override
     public void onClick(View v) {
 
@@ -148,7 +144,7 @@ public class ViewPager extends AppCompatActivity implements View.OnClickListener
 
     private void loadHome(){
 
-        startActivity(new Intent(this,Main.class));
+        startActivity(new Intent(this,MainType.class));
         finish();
     }
 
