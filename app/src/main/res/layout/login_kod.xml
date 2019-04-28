@@ -13,7 +13,7 @@
         android:src="@drawable/ic_left_arrow_white"
         android:background="@null"
         android:layout_margin="20dp"
-        android:id="@+id/btn_bck_phone"
+        android:id="@+id/btn_bck_login_code"
         />
 
     <ImageView
@@ -28,9 +28,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_bck_phone"
+        android:layout_below="@+id/btn_bck_login_code"
         android:layout_margin="20dp"
-        android:text="@string/uyeOl"
+        android:text="@string/giris"
         android:textColor="@color/white"
         android:textSize="30sp"
         android:id="@+id/txt_signup_phone_uyeol"
@@ -48,10 +48,10 @@
         >
 
         <EditText
-            android:id="@+id/edt_signup_phone"
+            android:id="@+id/edt_login_kod"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/signup_phone"
+            android:hint="@string/signup_phone_kod"
             android:singleLine="true"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
@@ -65,12 +65,12 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/button_proceed"
+        android:src="@drawable/button_complete"
         android:background="@null"
         android:layout_below="@+id/input_layout_kullanici"
         android:layout_alignParentRight="true"
         android:layout_marginTop="20dp"
-        android:id="@+id/btn_next_phone"
+        android:id="@+id/btn_next_login_code"
         />
 
 </RelativeLayout>

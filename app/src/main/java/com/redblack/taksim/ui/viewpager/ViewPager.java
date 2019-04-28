@@ -24,7 +24,7 @@ public class ViewPager extends AppCompatActivity implements View.OnClickListener
     private ImageButton next,back;
     private LinearLayout Dots_Layout;
     private ImageView[] dots;
-    private Button btn_start;
+    private ImageButton btn_start;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

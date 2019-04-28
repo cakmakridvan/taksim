@@ -13,7 +13,7 @@
         android:src="@drawable/ic_left_arrow_white"
         android:background="@null"
         android:layout_margin="20dp"
-        android:id="@+id/btn_bck_phone"
+        android:id="@+id/btn_bck_phone_kod"
         />
 
     <ImageView
@@ -28,19 +28,31 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_bck_phone"
-        android:layout_margin="20dp"
+        android:layout_below="@+id/btn_bck_phone_kod"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
         android:text="@string/uyeOl"
         android:textColor="@color/white"
         android:textSize="30sp"
         android:id="@+id/txt_signup_phone_uyeol"
         />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_layout_kullanici"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txt_signup_phone_uyeol"
+        android:layout_marginLeft="20dp"
+        android:text="@string/uyeOl_2"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:id="@+id/txt_signup_phone_kod_dogrulama"
+        />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/input_layout_kullanici2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_signup_phone_kod_dogrulama"
         android:layout_margin="20dp"
         app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
         android:textColorHint="@color/white"
@@ -48,16 +60,15 @@
         >
 
         <EditText
-            android:id="@+id/edt_signup_phone"
+            android:id="@+id/edt_signup_phone_kod"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/signup_phone"
+            android:hint="@string/signup_phone_kod"
             android:singleLine="true"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:backgroundTint="@color/white"
             android:inputType="number"
-            android:maxLength="11"
             />
 
     </android.support.design.widget.TextInputLayout>
@@ -67,10 +78,10 @@
         android:layout_height="wrap_content"
         android:src="@drawable/button_proceed"
         android:background="@null"
-        android:layout_below="@+id/input_layout_kullanici"
+        android:layout_below="@+id/input_layout_kullanici2"
         android:layout_alignParentRight="true"
         android:layout_marginTop="20dp"
-        android:id="@+id/btn_next_phone"
+        android:id="@+id/btn_next_phone_kod"
         />
 
 </RelativeLayout>

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.redblack.taksim.R;
+import com.redblack.taksim.ui.logintype.login.LoginPhone;
 import com.redblack.taksim.ui.logintype.signup.SignUpPhone;
 
 public class MainType extends AppCompatActivity implements View.OnClickListener {
@@ -36,6 +37,7 @@ public class MainType extends AppCompatActivity implements View.OnClickListener 
                 break;
 
             case R.id.btn_login:
+                startActivity(new Intent(this,LoginPhone.class));
                 break;
         }
 
