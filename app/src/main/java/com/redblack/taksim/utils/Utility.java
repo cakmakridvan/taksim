@@ -16,7 +16,7 @@ public class Utility {
 
     public static boolean isValidMobile(Integer phone_length) {
 
-        if(phone_length == 0 || phone_length < 11){
+        if(phone_length == 0 || phone_length < 10){
 
             return false;
         }else{
