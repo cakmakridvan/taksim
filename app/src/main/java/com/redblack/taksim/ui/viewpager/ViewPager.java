@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import com.redblack.taksim.R;
 import com.redblack.taksim.adapters.ViewPagerAdapter;
 import com.redblack.taksim.ui.logintype.MainType;
+import com.redblack.taksim.utils.PreferenceManager;
 
 
 public class ViewPager extends AppCompatActivity implements View.OnClickListener {
@@ -30,12 +31,14 @@ public class ViewPager extends AppCompatActivity implements View.OnClickListener
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-/*        if(new PreferenceManager(this).checkPreference()){
+     //Check of Intro Slider is show or not
+         if(new PreferenceManager(ViewPager.this).checkPreference()){
 
             loadHome();
-        }*/
+        }
 
-        setContentView(R.layout.view_pager);
+             setContentView(R.layout.view_pager);
+
 
      //initialize variable
         next = findViewById(R.id.btn_next);
@@ -110,6 +113,8 @@ public class ViewPager extends AppCompatActivity implements View.OnClickListener
             case R.id.start_btn:
 
                 loadHome();
+                //Save sharedPreferences of intro slider showed
+                new PreferenceManager(ViewPager.this).writePreference();
 
                 break;
         }
@@ -145,6 +150,7 @@ public class ViewPager extends AppCompatActivity implements View.OnClickListener
     private void loadHome(){
 
         startActivity(new Intent(this,MainType.class));
+
         finish();
     }
 
@@ -157,7 +163,7 @@ public class ViewPager extends AppCompatActivity implements View.OnClickListener
             mPager.setCurrentItem(next_slide);
         }else{
             loadHome();
-            //new PreferenceManager(this).writePreference();
+
         }
     }
 

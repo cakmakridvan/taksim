@@ -17,6 +17,9 @@ import com.redblack.taksim.R;
 import com.redblack.taksim.ui.logintype.server.Server;
 import com.redblack.taksim.ui.logintype.signup.SignUp;
 import com.redblack.taksim.ui.logintype.signup.SignUpPhoneKod;
+import com.redblack.taksim.ui.viewpager.ViewPager;
+import com.redblack.taksim.utils.PreferenceLoginSession;
+import com.redblack.taksim.utils.PreferenceManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -126,9 +129,12 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
 
                         Log.i("GetresultCode:","" + get_resultCode);
 
-                        //get Token
+                    //get Token
                         get_token = Server.token;
                         Log.i("token:","" + get_token);
+
+                     //Save sharedPreferences of login to System
+                        new PreferenceLoginSession(LoginKod.this).writePreference(get_token);
 
 
                     }catch (JSONException e){

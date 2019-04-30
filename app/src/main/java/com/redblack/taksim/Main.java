@@ -1,5 +1,6 @@
 package com.redblack.taksim;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.redblack.taksim.ui.logintype.MainType;
+import com.redblack.taksim.utils.PreferenceLoginSession;
 
 public class Main extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -94,6 +99,13 @@ public class Main extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
+
+        }else if(id == R.id.exit){
+
+        //Close Session, Logout process
+            new PreferenceLoginSession(Main.this).clearPreference();
+            startActivity(new Intent(Main.this,MainType.class));
+            finish();
 
         }
 

@@ -14,7 +14,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.redblack.taksim.R;
+import com.redblack.taksim.ui.logintype.login.LoginKod;
 import com.redblack.taksim.ui.logintype.server.Server;
+import com.redblack.taksim.utils.PreferenceLoginSession;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -135,6 +137,9 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
                         //get Token
                         get_token = Server.token;
                         Log.i("token:","" + get_token);
+
+                    //Save sharedPreferences of login to System
+                        new PreferenceLoginSession(SignUpPhoneKod.this).writePreference(get_token);
 
 
                     }catch (JSONException e){
