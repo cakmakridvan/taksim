@@ -31,6 +31,7 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
     private JSONObject jsonObject;
     private String get_jsonObject = "";
     private String numberPhone = "";
+    private String get_verifyCode = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,11 +77,11 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
                     numberPhone = "+90" + getNumber;
 
                     try {
-                        //Create JsonObject
+                    //Create JsonObject to send WebService
                         jsonObject.put("mobile",numberPhone);
                         jsonObject.put("debug",1);
                         jsonObject.put("type",1);
-                        //JsonObject to String
+                    //JsonObject to String
                         get_jsonObject = jsonObject.toString();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -124,7 +125,7 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
                     try{
 
                         JSONObject jsonObject = new JSONObject(getVerifyCode_result);
-                        String get_verifyCode = jsonObject.getString("verifyCode");
+                        get_verifyCode = jsonObject.getString("verifyCode");
                         get_mesaj_result = "true";
                         Log.i("verifyCode",""+get_verifyCode);
 
@@ -151,9 +152,12 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
             if(get_mesaj_result.equals("true")){
                 progressDialog.dismiss();
 
-                startActivity(new Intent(SignUpPhone.this,SignUpPhoneKod.class));
+             //Send data to SignUpPhoneKod
+                Intent go_signUpPhoneKod = new Intent(SignUpPhone.this,SignUpPhoneKod.class);
+                go_signUpPhoneKod.putExtra("kod",get_verifyCode);
+                go_signUpPhoneKod.putExtra("mobilNo",numberPhone);
+                startActivity(go_signUpPhoneKod);
             }
-
 
             else{
                 progressDialog.dismiss();
@@ -163,6 +167,7 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
         @Override
         protected void onCancelled() {
 
+            verifyCode = null;
             progressDialog.dismiss();
         }
     }
