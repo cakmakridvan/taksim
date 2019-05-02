@@ -6,28 +6,109 @@
     android:layout_height="match_parent"
     tools:context=".Main">
 
-    <android.support.design.widget.AppBarLayout
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        >
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                />
+
+        </android.support.design.widget.AppBarLayout>
+
+<!--    <TextView
+        android:id="@+id/txt_loaction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:text="TextView" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+    <Button
+        android:id="@+id/btn_Location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Location" />
+
+    <Button
+        android:id="@+id/btn_ContinueLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Location Continue" />
+
+    <TextView
+        android:id="@+id/txt_ContinueLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />-->
+
+     <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map"
+         android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+    <!--<include layout="@layout/content_main" />-->
+
+    <FrameLayout
+        android:id="@+id/frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            >
 
-    </android.support.design.widget.AppBarLayout>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity ="center"
+                android:id="@+id/edt_myLocation"
+                android:textSize="12sp"
+                android:focusable="false"
+                />
 
-    <include layout="@layout/content_main" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity ="center"
+                android:layout_marginTop="10dp"
+                android:id="@+id/edt_destinationAddress"
+                android:focusable="false"
+                />
 
-    <android.support.design.widget.FloatingActionButton
+        </LinearLayout>
+
+
+
+    </FrameLayout>
+
+
+<!--    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@android:drawable/ic_dialog_email" />-->
 
 </android.support.design.widget.CoordinatorLayout>

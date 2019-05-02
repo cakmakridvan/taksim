@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/txt_loaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+    <Button
+    android:id="@+id/btn_Location"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Location" />
+
+    <Button
+        android:id="@+id/btn_ContinueLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Location Continue" />
+
+    <TextView
+        android:id="@+id/txt_ContinueLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+<!--    <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>-->
+
+
+</LinearLayout>
