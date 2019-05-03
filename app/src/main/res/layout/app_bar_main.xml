@@ -78,23 +78,47 @@
             android:layout_marginRight="10dp"
             >
 
-            <EditText
+            <android.support.v7.widget.CardView
+                android:id="@+id/idCardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity ="center"
-                android:id="@+id/edt_myLocation"
-                android:textSize="12sp"
-                android:focusable="false"
-                />
+                android:layout_margin="5dp"
+                android:layout_marginTop="5dp"
+                app:cardCornerRadius="4dp">
 
-            <EditText
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity ="center"
+                    android:id="@+id/edt_myLocation"
+                    android:textSize="16sp"
+                    android:focusable="false"
+                    android:background="@android:color/transparent"
+                    />
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/idCardView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity ="center"
-                android:layout_marginTop="10dp"
-                android:id="@+id/edt_destinationAddress"
-                android:focusable="false"
-                />
+                android:layout_margin="5dp"
+                android:layout_marginTop="5dp"
+                app:cardCornerRadius="4dp">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity ="center"
+                    android:textSize="16sp"
+                    android:id="@+id/edt_destinationAddress"
+                    android:focusable="false"
+                    android:background="@android:color/transparent"
+                    android:hint="Gidilecek yeri giriniz"
+                    />
+            </android.support.v7.widget.CardView>
+
+
+
+
 
         </LinearLayout>
 

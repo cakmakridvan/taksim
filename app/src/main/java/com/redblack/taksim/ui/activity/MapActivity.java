@@ -14,9 +14,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.api.Places;
-//Add an import statement for the client library.import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
+
 
 import com.redblack.taksim.R;
 
@@ -36,7 +34,7 @@ public class MapActivity extends AppCompatActivity {
         txtView = findViewById(R.id.txtView);
 
         // Initialize Places.
-        Places.initialize(getApplicationContext(), "AIzaSyARt6cjhh2m2csWriJeMc4807falFnPmDI");
+        Places.initialize(MapActivity.this, "AIzaSyBMTYBLLQj1MkSHIPhfAXZZPktdKztLsng");
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);
 
