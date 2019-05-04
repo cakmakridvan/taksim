@@ -24,33 +24,11 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@color/places_autocomplete_error_button"
                 />
 
         </android.support.design.widget.AppBarLayout>
 
-<!--    <TextView
-        android:id="@+id/txt_loaction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-
-    <Button
-        android:id="@+id/btn_Location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Location" />
-
-    <Button
-        android:id="@+id/btn_ContinueLocation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Location Continue" />
-
-    <TextView
-        android:id="@+id/txt_ContinueLocation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />-->
 
      <fragment
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -73,66 +51,94 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="70dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:background="@drawable/shape"
             >
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/idCardView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginTop="5dp"
-                app:cardCornerRadius="4dp">
 
-                <EditText
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/station"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    />
+
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity ="center"
                     android:id="@+id/edt_myLocation"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
+                    android:layout_gravity="center"
                     android:focusable="false"
                     android:background="@android:color/transparent"
                     />
-            </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/idCardView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginTop="5dp"
-                app:cardCornerRadius="4dp">
-                <EditText
+                </LinearLayout>
+
+
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:orientation="horizontal">
+
+                   <ImageView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:src="@drawable/line"
+                       android:layout_gravity="center_vertical"
+                       android:layout_marginLeft="10dp"
+                       />
+
+                   <ImageView
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:src="@drawable/border_line"
+                       android:layout_gravity="center_vertical"
+                       />
+
+
+               </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/destination"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    />
+
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity ="center"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:id="@+id/edt_destinationAddress"
                     android:focusable="false"
+                    android:layout_gravity="center"
                     android:background="@android:color/transparent"
-                    android:hint="Gidilecek yeri giriniz"
                     />
-            </android.support.v7.widget.CardView>
-
-
+                </LinearLayout>
 
 
 
         </LinearLayout>
 
-
-
     </FrameLayout>
-
-
-<!--    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />-->
 
 </android.support.design.widget.CoordinatorLayout>

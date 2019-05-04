@@ -74,7 +74,7 @@ public class Main extends FragmentActivity
 
     private NavigationView navigationView;
 
-
+    private SupportMapFragment supportMapFragment;
     private double wayLatitude = 0.0, wayLongitude = 0.0;
 
     private StringBuilder stringBuilder;
@@ -82,7 +82,7 @@ public class Main extends FragmentActivity
     private boolean isContinue = false;
     private boolean isGPS = false;
 
-    private EditText edt_myAddress,edt_destination_address;
+    private TextView edt_myAddress,edt_destination_address;
 
     private Location location;
     private GoogleApiClient googleApiClient;
@@ -95,12 +95,30 @@ public class Main extends FragmentActivity
     private ArrayList<String> permissions = new ArrayList<>();
     // integer for permissions results request
     private static final int ALL_PERMISSIONS_RESULT = 1011;
+    Boolean chaeck = true;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+
+        supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        if (savedInstanceState == null) {
+            // First incarnation of this activity.
+
+            supportMapFragment.setRetainInstance(true);
+            chaeck = false;
+
+        } else {
+            // Reincarnated activity. The obtained map is the same map instance in the previous
+            // activity life cycle. There is no need to reinitialize it.
+
+            //supportMapFragment.getMapAsync(Main.this);
+            chaeck = true;
+        }
 
         // we add permissions we need to request location of the users
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -123,6 +141,8 @@ public class Main extends FragmentActivity
 
         edt_myAddress = findViewById(R.id.edt_myLocation);
         edt_destination_address = findViewById(R.id.edt_destinationAddress);
+        edt_destination_address.setHint("Nereye gitmek istiyorsunuz?");
+        edt_destination_address.setTextColor(R.color.transparent);
 
         edt_destination_address.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,7 +156,7 @@ public class Main extends FragmentActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.TRANSPARENT);
 
-        // Status bar :: Transparent
+/*        // Status bar :: Transparent
         Window window = this.getWindow();
 
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
@@ -153,7 +173,7 @@ public class Main extends FragmentActivity
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(Color.TRANSPARENT);
-        }
+        }*/
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
@@ -270,6 +290,9 @@ public class Main extends FragmentActivity
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        //first clear before maps
+        googleMap.clear();
         //Current Location
         LatLng latLng = new LatLng(wayLatitude,wayLongitude);
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Konumun");
@@ -379,8 +402,11 @@ public class Main extends FragmentActivity
             String cityName = getCityName(lat_lng);
             edt_myAddress.setText(cityName);
 
-            SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-            supportMapFragment.getMapAsync(Main.this);
+            if(chaeck == false) {
+
+                supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+                supportMapFragment.getMapAsync(Main.this);
+            }
 
 
         }
