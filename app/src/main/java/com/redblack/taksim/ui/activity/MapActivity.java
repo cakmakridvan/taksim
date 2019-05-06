@@ -23,7 +23,9 @@ import com.google.android.libraries.places.api.Places;
 
 
 import com.redblack.taksim.R;
+import com.redblack.taksim.adapters.HistorySearchAdapter;
 import com.redblack.taksim.adapters.ListMapAdapter;
+import com.redblack.taksim.model.HistorySearch;
 import com.redblack.taksim.model.ListMapData;
 
 /**
@@ -35,9 +37,11 @@ public class MapActivity extends AppCompatActivity {
     String TAG = "placeautocomplete";
     TextView txtView;
     private ListMapData[] listMapData;
-    private RecyclerView recyclerView;
+    private HistorySearch[] historySearches;
+    private RecyclerView recyclerView,recyclerView_history;
     private ListMapAdapter listMapAdapter;
     private ImageButton backMap;
+    private HistorySearchAdapter historySearchAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,24 @@ public class MapActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(listMapAdapter);
 
+        //History Search List
+/*        recyclerView_history = findViewById(R.id.recyclerView_historySearch);
+        historySearches = new HistorySearch[]{
+
+                new HistorySearch("Sarıyer,Maslak Mah. Eclipse A-Blok, 234 No"),
+                new HistorySearch("Sarıyer,Maslak Mah. Eclipse A-Blok, 234 No"),
+                new HistorySearch("Sarıyer,Maslak Mah. Eclipse A-Blok, 234 No"),
+                new HistorySearch("Sarıyer,Maslak Mah. Eclipse A-Blok, 234 No"),
+                new HistorySearch("Sarıyer,Maslak Mah. Eclipse A-Blok, 234 No"),
+                new HistorySearch("Sarıyer,Maslak Mah. Eclipse A-Blok, 234 No")
+        };
+
+        historySearchAdapter = new HistorySearchAdapter(historySearches);
+        recyclerView_history.setHasFixedSize(true);
+        recyclerView_history.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView_history.setAdapter(historySearchAdapter);*/
+
+
         backMap = findViewById(R.id.back_map);
         backMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +98,7 @@ public class MapActivity extends AppCompatActivity {
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
+        //Disable Search icon of autocomplete fragment and change text of it
         autocompleteFragment.setHint("Nereye gitmek istiyorsunuz?");
         ImageView searchIcon = (ImageView)((LinearLayout)autocompleteFragment.getView()).getChildAt(0);
         searchIcon.setVisibility(View.GONE);

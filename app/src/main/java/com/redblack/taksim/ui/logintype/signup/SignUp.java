@@ -6,6 +6,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -40,6 +43,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     private String get_token = "";
     private UpdateCustomer updateCustomer = null;
     private Integer get_resultCode = 15; //default value
+    private CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +57,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             get_mobilNo = extras.getString("mobileNO");
             get_token = extras.getString("token");
         }
+
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_signup);
 
         //Progress Diaolog initialize
         progressDialog = new ProgressDialog(SignUp.this);
@@ -91,10 +98,15 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
                 if(TextUtils.isEmpty(getName) || TextUtils.isEmpty(getLastName) || TextUtils.isEmpty(getMail)){
 
-                    Toast.makeText(this,"Bilgileri Kontrol Ediniz.",Toast.LENGTH_LONG).show();
+                    Snackbar snackbar = Snackbar.make(coordinatorLayout, "Bilgileri Kontrol Ediniz.", Snackbar.LENGTH_LONG);
+                    snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUp.this,R.color.colorAccent));
+                    snackbar.show();
+
                 }else if(!Utility.isValidEmail(getMail)){
 
-                    Toast.makeText(this,"Mail Adresinizi Kontrol Ediniz.",Toast.LENGTH_LONG).show();
+                    Snackbar snackbar = Snackbar.make(coordinatorLayout, "Mail Adresinizi Kontrol Ediniz.", Snackbar.LENGTH_LONG);
+                    snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUp.this,R.color.colorAccent));
+                    snackbar.show();
                 }
 
                 else {
@@ -200,7 +212,10 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             else{
                 progressDialog.dismiss();
 
-                Toast.makeText(SignUp.this,"İşlem Başarısız",Toast.LENGTH_LONG).show();
+                Snackbar snackbar = Snackbar.make(coordinatorLayout, "İşlem Başarısız", Snackbar.LENGTH_LONG);
+                snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUp.this,R.color.colorAccent));
+                snackbar.show();
+
             }
         }
 

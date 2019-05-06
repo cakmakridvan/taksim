@@ -68,6 +68,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class Main extends FragmentActivity
         implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -142,7 +144,7 @@ public class Main extends FragmentActivity
         edt_myAddress = findViewById(R.id.edt_myLocation);
         edt_destination_address = findViewById(R.id.edt_destinationAddress);
         edt_destination_address.setHint("Nereye gitmek istiyorsunuz?");
-        edt_destination_address.setTextColor(R.color.transparent);
+        //edt_destination_address.setTextColor(R.color.transparent);
 
         edt_destination_address.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,10 +366,32 @@ public class Main extends FragmentActivity
 
         }else if(id == R.id.exit){
 
-            //Close Session, Logout process
-            new PreferenceLoginSession(Main.this).clearPreference();
-            startActivity(new Intent(Main.this,MainType.class));
-            finish();
+            new SweetAlertDialog(Main.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.uygulama_cikis))
+                    .setContentText(getString(R.string.hesap_degistir))
+                    .setCancelText(getString(R.string.iptal))
+                    .setConfirmText(getString(R.string.hesap_cikis))
+                    .showCancelButton(true)
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.cancel();
+                        }
+                    })
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                            //Close Session, Logout process
+                            new PreferenceLoginSession(Main.this).clearPreference();
+                            startActivity(new Intent(Main.this,MainType.class));
+                            finish();
+
+                        }
+                    })
+                    .show();
+
+
 
         }
 

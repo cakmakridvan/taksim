@@ -6,12 +6,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.redblack.taksim.R;
 import com.redblack.taksim.ui.logintype.server.Server;
@@ -32,11 +34,15 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
     private String get_jsonObject = "";
     private String numberPhone = "";
     private String get_verifyCode = "";
+    private CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_phone);
+
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_signup_phone);
 
         //Progress Diaolog initialize
         progressDialog = new ProgressDialog(SignUpPhone.this);
@@ -69,7 +75,9 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
 
                 if(!Utility.isValidMobile(getNumber.length())){
 
-                    Toast.makeText(this,"Numaranızı Kontrol Edin",Toast.LENGTH_LONG).show();
+                    Snackbar snackbar = Snackbar.make(coordinatorLayout, "Numaranızı Kontrol Edin", Snackbar.LENGTH_LONG);
+                    snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUpPhone.this,R.color.colorAccent));
+                    snackbar.show();
                 }
 
                 else{
