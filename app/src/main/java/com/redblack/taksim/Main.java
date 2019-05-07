@@ -54,11 +54,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.redblack.taksim.ui.activity.MapActivity;
 import com.redblack.taksim.ui.fragments.MainFragment;
+import com.redblack.taksim.ui.interfaces.TaskLoadedCallback;
 import com.redblack.taksim.ui.logintype.MainType;
+import com.redblack.taksim.ui.mapdirection.DataParser;
+import com.redblack.taksim.ui.mapdirection.FetchURL;
 import com.redblack.taksim.utils.AppConstants;
 import com.redblack.taksim.utils.GpsUtils;
 import com.redblack.taksim.utils.PreferenceLoginSession;
@@ -72,7 +77,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Main extends FragmentActivity
         implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, TaskLoadedCallback {
 
     private NavigationView navigationView;
 
@@ -98,7 +103,10 @@ public class Main extends FragmentActivity
     // integer for permissions results request
     private static final int ALL_PERMISSIONS_RESULT = 1011;
     Boolean chaeck = true;
-
+    private Polyline currentPolyline;
+    private GoogleMap mMap;
+    private double get_latitude = 0.0;
+    private double get_longitude = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +159,7 @@ public class Main extends FragmentActivity
             public void onClick(View v) {
 
                 Intent a = new Intent(Main.this,MapActivity.class);
-                startActivity(a);
+                startActivityForResult(a,1);
             }
         });
 
@@ -190,6 +198,8 @@ public class Main extends FragmentActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
     }
 
     private ArrayList<String> permissionsToRequest(ArrayList<String> wantedPermissions) {
@@ -283,6 +293,8 @@ public class Main extends FragmentActivity
             myCity = addresses.get(0).getLocality();
             Log.i("Addresses:","" + address);
             Log.i("City:",""+myCity);
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -296,20 +308,36 @@ public class Main extends FragmentActivity
         //first clear before maps
         googleMap.clear();
         //Current Location
+        mMap = googleMap;
         LatLng latLng = new LatLng(wayLatitude,wayLongitude);
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Konumun");
+        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Konumum");
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_human));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-        googleMap.addMarker(markerOptions);
-        //Taxi Location
-        LatLng latLng2 = new LatLng(41.113130, 29.020156);
-        MarkerOptions markerOptions2 = new MarkerOptions().position(latLng2).title("taxi");
-        markerOptions2.icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi_icon));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng2,10));
-        googleMap.addMarker(markerOptions2);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+        mMap.addMarker(markerOptions);
 
+        //Destination(Selected Location from Place)
+        if(get_latitude != 0.0 && get_longitude != 0.0){
+            LatLng latLng3 = new LatLng(get_latitude, get_longitude);
+            MarkerOptions markerOptions3 = new MarkerOptions().position(latLng3).title("Varış Noktası");
+            markerOptions3.icon(BitmapDescriptorFactory.fromResource(R.drawable.destination_icon));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng3, 9));
+            mMap.addMarker(markerOptions3);
 
+            //Direction route between two Location
+            new FetchURL(Main.this).execute(getUrl(markerOptions.getPosition(), markerOptions3.getPosition(), "driving"), "driving");
 
+        }
+        //Taxi Location(Default Location)
+        else {
+            LatLng latLng2 = new LatLng(41.113130, 29.020156);
+            MarkerOptions markerOptions2 = new MarkerOptions().position(latLng2).title("taxi");
+            markerOptions2.icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi_icon));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 9));
+            mMap.addMarker(markerOptions2);
+
+            //Direction route between two Location
+            //new FetchURL(Main.this).execute(getUrl(markerOptions.getPosition(), markerOptions2.getPosition(), "driving"), "driving");
+        }
     }
 
     @Override
@@ -514,4 +542,44 @@ public class Main extends FragmentActivity
                 break;
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == 1){
+            if(resultCode == RESULT_OK){
+             //getting value of Selected Place information from MapActivity
+                String get_adres = data.getStringExtra("place_adres");
+                get_latitude = Double.parseDouble(data.getStringExtra("latitude"));
+                get_longitude = Double.parseDouble(data.getStringExtra("longitude"));
+                edt_destination_address.setText(get_adres);
+
+            }
+        }
+    }
+
+
+    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=" + directionMode;
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_server_key);
+        return url;
+    }
+
+
+    @Override
+    public void onTaskDone(Object... values) {
+        if (currentPolyline != null)
+            currentPolyline.remove();
+        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
+
 }

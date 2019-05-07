@@ -41,7 +41,7 @@ public class HomeAddress extends AppCompatActivity {
         });
 
         // Initialize Places.
-        Places.initialize(HomeAddress.this, "AIzaSyBMTYBLLQj1MkSHIPhfAXZZPktdKztLsng");
+        Places.initialize(HomeAddress.this, getString(R.string.google_maps_key));
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);
 

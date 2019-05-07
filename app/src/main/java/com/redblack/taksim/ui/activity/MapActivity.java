@@ -1,6 +1,7 @@
 package com.redblack.taksim.ui.activity;
 
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import java.util.Arrays;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
@@ -22,6 +24,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.libraries.places.api.Places;
 
 
+import com.redblack.taksim.Main;
 import com.redblack.taksim.R;
 import com.redblack.taksim.adapters.HistorySearchAdapter;
 import com.redblack.taksim.adapters.ListMapAdapter;
@@ -42,6 +45,10 @@ public class MapActivity extends AppCompatActivity {
     private ListMapAdapter listMapAdapter;
     private ImageButton backMap;
     private HistorySearchAdapter historySearchAdapter;
+
+    private String getAddress = "";
+    private double get_latitude = 0.0;
+    private double get_longitude = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +92,12 @@ public class MapActivity extends AppCompatActivity {
         backMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                    finish();
             }
         });
 
         // Initialize Places.
-        Places.initialize(MapActivity.this, "AIzaSyBMTYBLLQj1MkSHIPhfAXZZPktdKztLsng");
+        Places.initialize(MapActivity.this, getString(R.string.google_maps_key));
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);
 
@@ -104,15 +111,32 @@ public class MapActivity extends AppCompatActivity {
         searchIcon.setVisibility(View.GONE);
 
         // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
-                txtView.setText(place.getName()+","+place.getId());
+                final LatLng location = place.getLatLng();
+                get_latitude = location.latitude;
+                get_longitude = location.longitude;
+                getAddress = place.getName();
+
+                txtView.setText(place.getName()+","+location.latitude);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getLatLng());
+
+             //Send Value of selected Place
+                Intent intent = new Intent(MapActivity.this,Main.class);
+                if(!getAddress.equals("")) {
+                    intent.putExtra("place_adres", getAddress);//Address name
+                    intent.putExtra("latitude",String.valueOf(get_latitude));//Latitude
+                    intent.putExtra("longitude",String.valueOf(get_longitude));//Longitude
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+
+
             }
 
             @Override

@@ -40,7 +40,7 @@ public class JobAddress extends AppCompatActivity {
         });
 
         // Initialize Places.
-        Places.initialize(JobAddress.this, "AIzaSyBMTYBLLQj1MkSHIPhfAXZZPktdKztLsng");
+        Places.initialize(JobAddress.this, getString(R.string.google_maps_key));
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);
 

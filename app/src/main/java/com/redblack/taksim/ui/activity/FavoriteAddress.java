@@ -40,7 +40,7 @@ public class FavoriteAddress extends AppCompatActivity {
         });
 
         // Initialize Places.
-        Places.initialize(FavoriteAddress.this, "AIzaSyBMTYBLLQj1MkSHIPhfAXZZPktdKztLsng");
+        Places.initialize(FavoriteAddress.this, getString(R.string.google_maps_key));
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);
 

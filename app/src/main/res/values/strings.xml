@@ -22,5 +22,9 @@
     <string name="iptal">İptal</string>
     <string name="hesap_cikis">Evet</string>
 
+    <string name="google_maps_key">AIzaSyDM3DBOTC-v9VMTmifoIui7Y-6508vnXcc</string>
+    <string name="google_server_key">AIzaSyB9HiJWCg4vKcZUSr8bH2LgqjdIAzeEey0</string>
+
+
 
 </resources>

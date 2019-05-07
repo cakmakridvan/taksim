@@ -12,8 +12,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        >
+        android:gravity="center">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -51,13 +50,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginTop="70dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/shape"
-            >
-
-
+            android:background="@drawable/shape">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -136,6 +138,69 @@
                 </LinearLayout>
 
 
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearlyt_odeme_method"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:weightSum="3"
+            android:visibility="gone"
+            >
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/creditkart"
+                android:background="@null"
+                android:layout_weight="1"
+                android:id="@+id/imgbtn_kredikarti"
+                />
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/nakit"
+                android:background="@null"
+                android:layout_weight="1"
+                android:id="@+id/imgbtn_nakit"
+                />
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/sehirkarti"
+                android:background="@null"
+                android:layout_weight="1"
+                android:id="@+id/imgbtn_sehirkarti"
+                />
+
+
+        </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            >
+
+            <ImageButton
+                android:id="@+id/imgbtn_kartekle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/kartekle"
+                android:background="@null"
+                android:visibility="gone"
+                />
 
         </LinearLayout>
 
