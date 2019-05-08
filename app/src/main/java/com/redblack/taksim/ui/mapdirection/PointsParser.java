@@ -31,6 +31,8 @@ public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<S
         JSONObject jObject;
         List<List<HashMap<String, String>>> routes = null;
 
+        List<List<HashMap<String, String>>> getKm = null;
+
         try {
             jObject = new JSONObject(jsonData[0]);
             Log.d("mylog", jsonData[0].toString());
@@ -89,4 +91,5 @@ public class PointsParser extends AsyncTask<String, Integer, List<List<HashMap<S
             Log.d("mylog", "without Polylines drawn");
         }
     }
+
 }

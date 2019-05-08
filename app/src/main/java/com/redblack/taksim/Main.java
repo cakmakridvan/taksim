@@ -1,51 +1,43 @@
 package com.redblack.taksim;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -56,19 +48,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.redblack.taksim.ui.activity.MapActivity;
 import com.redblack.taksim.ui.fragments.MainFragment;
 import com.redblack.taksim.ui.interfaces.TaskLoadedCallback;
 import com.redblack.taksim.ui.logintype.MainType;
-import com.redblack.taksim.ui.mapdirection.DataParser;
-import com.redblack.taksim.ui.mapdirection.FetchURL;
-import com.redblack.taksim.utils.AppConstants;
+import com.redblack.taksim.ui.mapdirection.PointsParser;
 import com.redblack.taksim.utils.GpsUtils;
 import com.redblack.taksim.utils.PreferenceLoginSession;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -77,7 +73,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Main extends FragmentActivity
         implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, TaskLoadedCallback {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, TaskLoadedCallback,View.OnTouchListener {
 
     private NavigationView navigationView;
 
@@ -107,6 +103,12 @@ public class Main extends FragmentActivity
     private GoogleMap mMap;
     private double get_latitude = 0.0;
     private double get_longitude = 0.0;
+    private FetchURL fetchURL = null;
+
+    private JSONArray jRoutes;
+    private JSONArray jLegs;
+    private TextView txt_km,txt_duration;
+    private String getKm = "" , getDuration = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,15 +155,21 @@ public class Main extends FragmentActivity
         edt_destination_address = findViewById(R.id.edt_destinationAddress);
         edt_destination_address.setHint("Nereye gitmek istiyorsunuz?");
         //edt_destination_address.setTextColor(R.color.transparent);
+        edt_destination_address.setOnTouchListener(this);
 
-        edt_destination_address.setOnClickListener(new View.OnClickListener() {
+        txt_km = findViewById(R.id.total_KM);
+        txt_duration = findViewById(R.id.total_duration);
+        txt_duration.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-
+            public boolean onTouch(View v, MotionEvent event) {
                 Intent a = new Intent(Main.this,MapActivity.class);
                 startActivityForResult(a,1);
+                return true;
             }
         });
+
+
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.TRANSPARENT);
@@ -324,7 +332,12 @@ public class Main extends FragmentActivity
             mMap.addMarker(markerOptions3);
 
             //Direction route between two Location
-            new FetchURL(Main.this).execute(getUrl(markerOptions.getPosition(), markerOptions3.getPosition(), "driving"), "driving");
+
+            //new FetchURL(Main.this).execute(getUrl(markerOptions.getPosition(), markerOptions3.getPosition(), "driving"), "driving");
+
+            fetchURL = new FetchURL(Main.this);
+            fetchURL.execute(getUrl(markerOptions.getPosition(), markerOptions3.getPosition(), "driving"), "driving");
+
 
         }
         //Taxi Location(Default Location)
@@ -580,6 +593,102 @@ public class Main extends FragmentActivity
         if (currentPolyline != null)
             currentPolyline.remove();
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
+    }
+
+    public class FetchURL extends AsyncTask<String, Void, String> {
+        Context mContext;
+        String directionMode = "driving";
+
+        public FetchURL(Context mContext) {
+            this.mContext = mContext;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            // For storing data from web service
+
+            String data = "";
+            directionMode = strings[1];
+            try {
+                // Fetching the data from web service
+                data = downloadUrl(strings[0]);
+                JSONObject jObject = new JSONObject(data);
+                jRoutes = jObject.getJSONArray("routes");
+                /** Traversing all routes */
+                for (int i = 0; i < jRoutes.length(); i++) {
+                    jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
+                    List path = new ArrayList<>();
+                    //get km and duration
+                    JSONObject distance = jLegs.getJSONObject(0).getJSONObject("distance");
+                    getKm = distance.getString("text");
+                    Log.i("Distance",getKm);
+                    JSONObject duration = jLegs.getJSONObject(0).getJSONObject("duration");
+                    getDuration = duration.getString("text");
+                    Log.i("Duration",getDuration);
+
+
+                }
+
+                    Log.d("mylog", "Background task data " + data.toString());
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            PointsParser parserTask = new PointsParser(mContext, directionMode);
+            // Invokes the thread for parsing the JSON data
+            parserTask.execute(s);
+
+            txt_km.setText(getKm);
+            txt_duration.setText(getDuration);
+
+        }
+
+        private String downloadUrl(String strUrl) throws IOException {
+            String data = "";
+            InputStream iStream = null;
+            HttpURLConnection urlConnection = null;
+            try {
+                URL url = new URL(strUrl);
+                // Creating an http connection to communicate with url
+                urlConnection = (HttpURLConnection) url.openConnection();
+                // Connecting to url
+                urlConnection.connect();
+                // Reading data from url
+                iStream = urlConnection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+                StringBuffer sb = new StringBuffer();
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+                data = sb.toString();
+                Log.d("mylog", "Downloaded URL: " + data.toString());
+                br.close();
+            } catch (Exception e) {
+                Log.d("mylog", "Exception downloading URL: " + e.toString());
+            } finally {
+                iStream.close();
+                urlConnection.disconnect();
+            }
+            return data;
+        }
     }
 
 }

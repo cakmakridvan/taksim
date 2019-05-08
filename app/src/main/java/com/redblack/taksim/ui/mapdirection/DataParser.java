@@ -10,9 +10,6 @@ import java.util.List;
 
 public class DataParser {
 
-    private String km = "";
-
-
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
         List<List<HashMap<String, String>>> routes = new ArrayList<>();
@@ -26,9 +23,8 @@ public class DataParser {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                 List path = new ArrayList<>();
             //get km
-                JSONObject distance = jLegs.getJSONObject(0).getJSONObject("distance");
-                km = distance.getString("text");
-
+/*                JSONObject distance = jLegs.getJSONObject(0).getJSONObject("distance");
+                km = distance.getString("text");*/
 
                 /** Traversing all legs */
                 for (int j = 0; j < jLegs.length(); j++) {
@@ -97,5 +93,7 @@ public class DataParser {
 
         return poly;
     }
+
+
 
 }
