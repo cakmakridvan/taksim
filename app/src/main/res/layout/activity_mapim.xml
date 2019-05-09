@@ -80,7 +80,7 @@
             android:visibility="gone"
             />
 
-        <TextView
+<!--        <TextView
         android:id="@+id/txtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_gravity="center"
-        />
+        />-->
 
     </LinearLayout>
 

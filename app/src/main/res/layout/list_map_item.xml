@@ -27,13 +27,15 @@
         android:layout_marginTop="14dp"
         />
 
-    <ImageView
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:src="@drawable/addbtn"
         android:layout_centerVertical="true"
         android:layout_marginRight="10dp"
+        android:background="@null"
+        android:id="@+id/imgbtn"
         />
 
 </RelativeLayout>

@@ -6,16 +6,16 @@
 
     <group android:id="@+id/item1" android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_profil"
             android:icon="@drawable/ic_profile"
             android:title="Profilim"
             />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_creditkart"
             android:icon="@drawable/ic_credit_card"
             android:title="Kredi Kartlarım" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_adreslerim"
             android:icon="@drawable/ic_home"
             android:title="Adreslerim" />
 
@@ -24,7 +24,7 @@
     <group android:id="@+id/item2" android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_bildirimler"
             android:icon="@drawable/ic_bell"
             android:title="Bildirimler" />
 

@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +50,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.redblack.taksim.ui.activity.HomeAddress;
 import com.redblack.taksim.ui.activity.MapActivity;
 import com.redblack.taksim.ui.fragments.MainFragment;
 import com.redblack.taksim.ui.interfaces.TaskLoadedCallback;
@@ -55,6 +58,7 @@ import com.redblack.taksim.ui.logintype.MainType;
 import com.redblack.taksim.ui.mapdirection.PointsParser;
 import com.redblack.taksim.utils.GpsUtils;
 import com.redblack.taksim.utils.PreferenceLoginSession;
+import com.redblack.taksim.utils.Utility;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -70,10 +74,11 @@ import java.util.List;
 import java.util.Locale;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.paperdb.Paper;
 
 public class Main extends FragmentActivity
         implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, TaskLoadedCallback,View.OnTouchListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, TaskLoadedCallback {
 
     private NavigationView navigationView;
 
@@ -101,20 +106,25 @@ public class Main extends FragmentActivity
     Boolean chaeck = true;
     private Polyline currentPolyline;
     private GoogleMap mMap;
+
     private double get_latitude = 0.0;
     private double get_longitude = 0.0;
-    private FetchURL fetchURL = null;
+    private String get_adres = "";
+    private String getSavedAdres = "";
 
+    private FetchURL fetchURL = null;
     private JSONArray jRoutes;
     private JSONArray jLegs;
-    private TextView txt_km,txt_duration;
+    private TextView txt_km,txt_duration,txt_price;
     private String getKm = "" , getDuration = "";
+
+    private LinearLayout lytBottom,lytTop;
+    private String get_totalPrice = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
 
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -131,6 +141,9 @@ public class Main extends FragmentActivity
             //supportMapFragment.getMapAsync(Main.this);
             chaeck = true;
         }
+
+        //Initializa Paper
+        //Paper.init(Main.this);
 
         // we add permissions we need to request location of the users
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -153,18 +166,20 @@ public class Main extends FragmentActivity
 
         edt_myAddress = findViewById(R.id.edt_myLocation);
         edt_destination_address = findViewById(R.id.edt_destinationAddress);
-        edt_destination_address.setHint("Nereye gitmek istiyorsunuz?");
+        //edt_destination_address.setHint("Nereye gitmek istiyorsunuz?");
         //edt_destination_address.setTextColor(R.color.transparent);
-        edt_destination_address.setOnTouchListener(this);
+
 
         txt_km = findViewById(R.id.total_KM);
         txt_duration = findViewById(R.id.total_duration);
-        txt_duration.setOnTouchListener(new View.OnTouchListener() {
+        txt_price = findViewById(R.id.total_price);
+
+        edt_destination_address.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View v) {
+
                 Intent a = new Intent(Main.this,MapActivity.class);
                 startActivityForResult(a,1);
-                return true;
             }
         });
 
@@ -273,6 +288,8 @@ public class Main extends FragmentActivity
         }
     }
 
+
+
     private boolean checkPlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
@@ -326,19 +343,24 @@ public class Main extends FragmentActivity
         //Destination(Selected Location from Place)
         if(get_latitude != 0.0 && get_longitude != 0.0){
             LatLng latLng3 = new LatLng(get_latitude, get_longitude);
-            MarkerOptions markerOptions3 = new MarkerOptions().position(latLng3).title("Varış Noktası");
+            MarkerOptions markerOptions3 = new MarkerOptions().position(latLng3).title(get_adres);
             markerOptions3.icon(BitmapDescriptorFactory.fromResource(R.drawable.destination_icon));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng3, 9));
             mMap.addMarker(markerOptions3);
+            edt_destination_address.setText(get_adres);
 
-            //Direction route between two Location
+         //Show Invisible Layout at the bottom and top
+         lytBottom = findViewById(R.id.lyt_bottom);
+         lytBottom.setVisibility(View.VISIBLE);
 
-            //new FetchURL(Main.this).execute(getUrl(markerOptions.getPosition(), markerOptions3.getPosition(), "driving"), "driving");
+         lytTop = findViewById(R.id.lyt_top);
+         lytTop.setVisibility(View.VISIBLE);
 
+
+
+         //Direction route between two Location
             fetchURL = new FetchURL(Main.this);
             fetchURL.execute(getUrl(markerOptions.getPosition(), markerOptions3.getPosition(), "driving"), "driving");
-
-
         }
         //Taxi Location(Default Location)
         else {
@@ -355,6 +377,9 @@ public class Main extends FragmentActivity
 
     @Override
     public void onBackPressed() {
+      //Delete Selected Location
+        //Paper.book().delete("SelectedLocation");
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -391,19 +416,21 @@ public class Main extends FragmentActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_profil) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_creditkart) {
 
-            MainFragment mainFragment = new MainFragment();
+
+
+/*            MainFragment mainFragment = new MainFragment();
             FragmentManager fragmentManager = this.getSupportFragmentManager();
             android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.frame, mainFragment);
-            fragmentTransaction.commit();
+            fragmentTransaction.commit();*/
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_adreslerim) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_bildirimler) {
 
         }else if(id == R.id.exit){
 
@@ -467,6 +494,15 @@ public class Main extends FragmentActivity
             String cityName = getCityName(lat_lng);
             edt_myAddress.setText(cityName);
 
+    /*
+          //Get Saved Selected Location Name
+            getSavedAdres = Paper.book().read("SelectedLocation");
+            if(!TextUtils.isEmpty(getSavedAdres)){
+
+                edt_destination_address.setText(getSavedAdres);
+            }
+    */
+
             if(chaeck == false) {
 
                 supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -502,9 +538,7 @@ public class Main extends FragmentActivity
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     @Override
     public void onLocationChanged(Location location) {
@@ -561,11 +595,12 @@ public class Main extends FragmentActivity
         if(requestCode == 1){
             if(resultCode == RESULT_OK){
              //getting value of Selected Place information from MapActivity
-                String get_adres = data.getStringExtra("place_adres");
+                get_adres = data.getStringExtra("place_adres");
+              //Saving Selected Loction Name
+                //Paper.book().write("SelectedLocation",get_adres);
+
                 get_latitude = Double.parseDouble(data.getStringExtra("latitude"));
                 get_longitude = Double.parseDouble(data.getStringExtra("longitude"));
-                edt_destination_address.setText(get_adres);
-
             }
         }
     }
@@ -595,10 +630,7 @@ public class Main extends FragmentActivity
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        return false;
-    }
+
 
     public class FetchURL extends AsyncTask<String, Void, String> {
         Context mContext;
@@ -636,10 +668,11 @@ public class Main extends FragmentActivity
                     Log.i("Distance",getKm);
                     JSONObject duration = jLegs.getJSONObject(0).getJSONObject("duration");
                     getDuration = duration.getString("text");
+                    getDuration = getDuration.replace("mins","dk"); //replace mins to dk
                     Log.i("Duration",getDuration);
-
-
                 }
+
+                get_totalPrice = Utility.taksimetre(getKm);
 
                     Log.d("mylog", "Background task data " + data.toString());
             } catch (Exception e) {
@@ -657,6 +690,7 @@ public class Main extends FragmentActivity
 
             txt_km.setText(getKm);
             txt_duration.setText(getDuration);
+            txt_price.setText(get_totalPrice);
 
         }
 

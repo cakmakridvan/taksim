@@ -28,8 +28,11 @@ import com.redblack.taksim.Main;
 import com.redblack.taksim.R;
 import com.redblack.taksim.adapters.HistorySearchAdapter;
 import com.redblack.taksim.adapters.ListMapAdapter;
+import com.redblack.taksim.model.Address;
 import com.redblack.taksim.model.HistorySearch;
 import com.redblack.taksim.model.ListMapData;
+
+import io.paperdb.Paper;
 
 /**
  * Created by User on 10/2/2017.
@@ -49,26 +52,21 @@ public class MapActivity extends AppCompatActivity {
     private String getAddress = "";
     private double get_latitude = 0.0;
     private double get_longitude = 0.0;
+    private Address address_home, address_job, address_favorite;
+    private String getName_home = "" , getName_job = "", getName_favorite = "";
+    private double lat_home = 0.0, lng_home = 0.0, lat_job = 0.0, lng_job = 0.0, lat_favorite = 0.0, lng_favorite = 0.0;
+
+    private String homeDescription, jobDescription, favoriteDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mapim);
 
-        txtView = findViewById(R.id.txtView);
-        recyclerView = findViewById(R.id.recyclerView_map);
+     //Initialize Paper
+        Paper.init(MapActivity.this);
 
-     //ListMapData initialize
-        listMapData = new ListMapData[]{
-                new ListMapData("Ev adresi ekle",R.drawable.homeaddress),
-                new ListMapData("İş adresi ekle",R.drawable.workaddress),
-                new ListMapData("Favori adres ekle",R.drawable.favoriaddress)
-        };
 
-        listMapAdapter = new ListMapAdapter(listMapData);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(listMapAdapter);
 
         //History Search List
 /*        recyclerView_history = findViewById(R.id.recyclerView_historySearch);
@@ -123,8 +121,8 @@ public class MapActivity extends AppCompatActivity {
                 get_longitude = location.longitude;
                 getAddress = place.getName();
 
-                txtView.setText(place.getName()+","+location.latitude);
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getLatLng());
+/*                txtView.setText(place.getName()+","+location.latitude);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getLatLng());*/
 
              //Send Value of selected Place
                 Intent intent = new Intent(MapActivity.this,Main.class);
@@ -147,5 +145,63 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+      //Get Saved Home Address info
+        address_home = Paper.book().read("home_address");
+        if(address_home != null) {
+            getName_home = address_home.getName();
+            lat_home = address_home.getLat();
+            lng_home = address_home.getLng();
+            Log.i("name", getName_home);
+
+            homeDescription = "Ev : " + getName_home;
+        }else{
+            homeDescription = "Ev adresi ekle";
+        }
+
+      //Get Saved Job Address info
+        address_job = Paper.book().read("job_address");
+        if(address_job != null) {
+            getName_job = address_job.getName();
+            lat_job = address_job.getLat();
+            lng_job = address_job.getLng();
+            Log.i("name", getName_job);
+
+            jobDescription = "İş : " + getName_job;
+        }else{
+            jobDescription = "İş adresi ekle";
+        }
+
+        //Get Saved Favorite Address info
+        address_favorite = Paper.book().read("favorite_address");
+        if(address_favorite != null) {
+            getName_favorite = address_favorite.getName();
+            lat_favorite = address_favorite.getLat();
+            lng_favorite = address_favorite.getLng();
+            Log.i("name", getName_favorite);
+
+            favoriteDescription = "Favori : " + getName_favorite;
+        }else{
+            favoriteDescription = "Favori adres ekle";
+        }
+
+        //txtView = findViewById(R.id.txtView);
+        recyclerView = findViewById(R.id.recyclerView_map);
+
+        //ListMapData initialize
+        listMapData = new ListMapData[]{
+                new ListMapData(homeDescription,R.drawable.homeaddress),
+                new ListMapData(jobDescription,R.drawable.workaddress),
+                new ListMapData(favoriteDescription,R.drawable.favoriaddress)
+        };
+
+        listMapAdapter = new ListMapAdapter(listMapData,MapActivity.this);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(listMapAdapter);
+
+    }
 }

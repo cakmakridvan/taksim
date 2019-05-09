@@ -1,5 +1,6 @@
 package com.redblack.taksim.utils;
 
+import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
 public class Utility {
@@ -22,6 +23,20 @@ public class Utility {
         }else{
             return true;
         }
+    }
+
+    public static String taksimetre(String km){
+
+        km = km.replace("km",""); //replace km to ""
+        km = km.trim();//trim space
+
+        double start_price = 3.90;
+        double last_price = 0.0;
+        double per_km = 3.70;
+        double get_km = Double.parseDouble(km);
+
+        last_price = start_price + (per_km * get_km);
+        return (new DecimalFormat("##.##").format(last_price) + " " + "TL"); //With Decimal fotmat, showing only two digit after decimal
     }
 
 
