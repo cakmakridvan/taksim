@@ -21,6 +21,8 @@ import com.redblack.taksim.utils.PreferenceLoginSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.paperdb.Paper;
+
 public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickListener {
 
     private ImageButton back,next;
@@ -40,6 +42,9 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_phone_kod);
+
+        //Initialize Paper
+        Paper.init(SignUpPhoneKod.this);
 
         entered_kod = findViewById(R.id.edt_signup_phone_kod);
 
@@ -137,6 +142,9 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
                         //get Token
                         get_token = Server.token;
                         Log.i("token:","" + get_token);
+
+                        //saved token Paper db
+                        Paper.book().write("token",get_token);
 
                     //Save sharedPreferences of login to System
                         new PreferenceLoginSession(SignUpPhoneKod.this).writePreference(get_token);

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back_grey"
+            android:background="@null"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/bck_btn"
+            />
+
+         <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Kart Bilgileri"
+             android:textSize="18sp"
+             android:textColor="@color/black"
+             android:layout_marginLeft="20dp"
+             android:layout_marginTop="10dp"
+             android:layout_below="@+id/bck_btn"
+             android:id="@+id/txt_kart_bilgileri"
+
+             />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_kart_bilgileri"
+            android:layout_margin="10dp"
+            android:background="@drawable/bckgrnd_adsoyad"
+            android:hint="Ad Soyad"
+            android:paddingLeft="20dp"
+            android:id="@+id/edt_adsoyadi"
+            />
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edt_adsoyadi"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/bckgrnd_adsoyad"
+            android:hint="Kart Numarası"
+            android:paddingLeft="20dp"
+            android:id="@+id/edt_kart_numarasi"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edt_kart_numarasi"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:id="@+id/lyt_kart_number"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            >
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/month"
+                    android:hint="MM/YY"
+                    android:paddingLeft="20dp"
+                    />
+                
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/month"
+                    android:hint="CVV"
+                    android:paddingLeft="20dp"
+                    />
+
+
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_add_card"
+            android:layout_below="@+id/lyt_kart_number"
+            android:background="@null"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="40dp"
+            />
+
+
+        <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/vawe_left"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/vawe_right"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            />
+
+
+
+</RelativeLayout>

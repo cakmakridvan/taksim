@@ -14,23 +14,21 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,17 +48,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.redblack.taksim.ui.activity.HomeAddress;
+import com.google.gson.Gson;
+import com.redblack.taksim.model.usablecars.GetCars;
+import com.redblack.taksim.model.usablecars.ModelCars;
+import com.redblack.taksim.ui.activity.CreditCard;
 import com.redblack.taksim.ui.activity.MapActivity;
-import com.redblack.taksim.ui.fragments.MainFragment;
 import com.redblack.taksim.ui.interfaces.TaskLoadedCallback;
 import com.redblack.taksim.ui.logintype.MainType;
+import com.redblack.taksim.ui.logintype.server.Server;
 import com.redblack.taksim.ui.mapdirection.PointsParser;
 import com.redblack.taksim.utils.GpsUtils;
 import com.redblack.taksim.utils.PreferenceLoginSession;
 import com.redblack.taksim.utils.Utility;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -72,6 +74,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.paperdb.Paper;
@@ -121,10 +125,20 @@ public class Main extends FragmentActivity
     private LinearLayout lytBottom,lytTop;
     private String get_totalPrice = "";
 
+    private Integer get_resultCode = 15; //default value
+    private JSONObject jsonObject;
+    private String get_jsonObject = "";
+    private GetUsableCars getUsableCars = null;
+    private String get_token = "";
+    private GetCars response_getCars;
+    private ArrayList<ModelCars> car_list;
+    Timer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
 
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -143,7 +157,11 @@ public class Main extends FragmentActivity
         }
 
         //Initializa Paper
-        //Paper.init(Main.this);
+          Paper.init(Main.this);
+        //get Token from Paper
+          get_token = Paper.book().read("token");
+
+        timer=new Timer();
 
         // we add permissions we need to request location of the users
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -163,6 +181,7 @@ public class Main extends FragmentActivity
                 addApi(LocationServices.API).
                 addConnectionCallbacks(this).
                 addOnConnectionFailedListener(this).build();
+
 
         edt_myAddress = findViewById(R.id.edt_myLocation);
         edt_destination_address = findViewById(R.id.edt_destinationAddress);
@@ -222,6 +241,8 @@ public class Main extends FragmentActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Create Json Object
+        jsonObject = new JSONObject();
 
     }
 
@@ -332,20 +353,29 @@ public class Main extends FragmentActivity
 
         //first clear before maps
         googleMap.clear();
-        //Current Location
+
         mMap = googleMap;
+
+        //Current your Location
         LatLng latLng = new LatLng(wayLatitude,wayLongitude);
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Konumum");
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_human));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
         mMap.addMarker(markerOptions);
+
 
         //Destination(Selected Location from Place)
         if(get_latitude != 0.0 && get_longitude != 0.0){
+
+            if(timer != null){
+                timer.cancel();
+                timer = null;
+            }
+
             LatLng latLng3 = new LatLng(get_latitude, get_longitude);
             MarkerOptions markerOptions3 = new MarkerOptions().position(latLng3).title(get_adres);
             markerOptions3.icon(BitmapDescriptorFactory.fromResource(R.drawable.destination_icon));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng3, 9));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng3, 10));
             mMap.addMarker(markerOptions3);
             edt_destination_address.setText(get_adres);
 
@@ -364,14 +394,46 @@ public class Main extends FragmentActivity
         }
         //Taxi Location(Default Location)
         else {
-            LatLng latLng2 = new LatLng(41.113130, 29.020156);
+
+
+            try {
+                //Create JsonObject to send WebService
+                jsonObject.put("lon",wayLongitude);
+                jsonObject.put("lat",wayLatitude);
+                jsonObject.put("radius",10000);
+                //JsonObject to String
+                get_jsonObject = jsonObject.toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if(get_latitude == 0.0 && get_longitude == 0.0) {
+                //Updating Locations of near Taxi at evey 5 second
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        //your method
+                        Main.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getUsableCars = new GetUsableCars(get_jsonObject, get_token);
+                                getUsableCars.execute((Void) null);
+                            }
+                        });
+
+
+                    }
+                }, 0, 5000);//put here time 1000 milliseconds=1 second
+            }
+
+
+
+/*            LatLng latLng2 = new LatLng(41.113130, 29.020156);
             MarkerOptions markerOptions2 = new MarkerOptions().position(latLng2).title("taxi");
             markerOptions2.icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi_icon));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 9));
-            mMap.addMarker(markerOptions2);
+            mMap.addMarker(markerOptions2);*/
 
-            //Direction route between two Location
-            //new FetchURL(Main.this).execute(getUrl(markerOptions.getPosition(), markerOptions2.getPosition(), "driving"), "driving");
+
         }
     }
 
@@ -419,6 +481,8 @@ public class Main extends FragmentActivity
         if (id == R.id.nav_profil) {
             // Handle the camera action
         } else if (id == R.id.nav_creditkart) {
+
+            startActivity(new Intent(Main.this,CreditCard.class));
 
 
 
@@ -547,6 +611,10 @@ public class Main extends FragmentActivity
             //locationTv.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
 
             Log.i("Tag","Latitude : " + location.getLatitude() + "Longitude : " + location.getLongitude());
+
+            wayLatitude = location.getLatitude();
+            wayLongitude = location.getLongitude();
+
 
         }
 
@@ -722,6 +790,96 @@ public class Main extends FragmentActivity
                 urlConnection.disconnect();
             }
             return data;
+        }
+    }
+
+    public class GetUsableCars extends AsyncTask<Void, Void, Boolean> {
+
+        private final String json;
+        private final String token;
+
+        GetUsableCars(String json, String token){
+
+            this.json = json;
+            this.token = token;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //progressDialog.setContentView(R.layout.custom_progress);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                String getUsableCars_result = Server.GetUsableCars(json,token);
+                if(!getUsableCars_result.trim().equalsIgnoreCase("false")){
+                    try{
+                        response_getCars = new Gson().fromJson(getUsableCars_result,GetCars.class);
+                        car_list = response_getCars.getData_list();
+                        Log.i("UsableCarList",""+car_list);
+
+                        JSONObject jsonObject = new JSONObject(getUsableCars_result);
+                        get_resultCode = jsonObject.getInt("errCode");
+                        Log.i("resultCode",""+get_resultCode);
+                    }catch (JSONException e){
+                        Log.i("Exception",e.getMessage());
+                    }
+                }else{
+                    get_resultCode = 15;
+                }
+
+            }catch (Exception e){
+                Log.i("Exception",e.getMessage());
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if(get_resultCode == 0){
+
+                if(car_list.size() > 0){
+
+                    for(int i = 0; i<car_list.size(); i++){
+                        //First Clear Map
+                        mMap.clear();
+
+                        LatLng latLng2 = new LatLng(car_list.get(i).getLat(),car_list.get(i).getLon());
+                        MarkerOptions markerOptions2 = new MarkerOptions().position(latLng2).title(car_list.get(i).getCarNo());
+                        markerOptions2.icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi_icon));
+                        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 9));
+                        mMap.addMarker(markerOptions2);
+
+                        //Current your Location
+                        LatLng latLng = new LatLng(wayLatitude,wayLongitude);
+                        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Konumum");
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_human));
+                        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                        mMap.addMarker(markerOptions);
+                    }
+                }
+            }
+
+            else{
+
+/*                Snackbar snackbar = Snackbar.make(coordinatorLayout, "İşlem Başarısız", Snackbar.LENGTH_LONG);
+                snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUp.this,R.color.colorAccent));
+                snackbar.show();*/
+
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+
+            getUsableCars = null;
+
         }
     }
 

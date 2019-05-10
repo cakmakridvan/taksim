@@ -212,6 +212,70 @@ public class Server {
 
     }
 
+    public static String GetUsableCars(String obj,String token) {
+
+        String method_Login = "GetUsableCars.do";
+
+        try {
+
+            URL url = new URL(Main_URL + method_Login); // here is your URL path
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("jsonParam", obj);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(15000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+            conn.setRequestProperty("_token",token);
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getPostDataString(jsonObject));
+
+            writer.flush();
+            writer.close();
+            os.close();
+
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(
+                                conn.getInputStream()));
+                StringBuffer sb = new StringBuffer("");
+                String line = "";
+
+                while ((line = in.readLine()) != null) {
+
+                    sb.append(line);
+                    break;
+                }
+
+                in.close();
+                return sb.toString();
+            } else {
+                //User Info issue
+                //return new String("false : "+responseCode);
+                Log.i("Exception: ", "" + responseCode);
+                return "false";
+            }
+
+        } catch (Exception e) {
+            //Connection issue
+            //return new String("Exception: " + e.getMessage());
+            Log.i("Exception: ", e.getMessage());
+            return "false";
+        }
+
+    }
+
+
+
     public static String getPostDataString(JSONObject params) throws Exception {
 
         StringBuilder result = new StringBuilder();
