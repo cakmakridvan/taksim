@@ -26,9 +26,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +57,7 @@ import com.redblack.taksim.model.usablecars.GetCars;
 import com.redblack.taksim.model.usablecars.ModelCars;
 import com.redblack.taksim.ui.activity.CreditCard;
 import com.redblack.taksim.ui.activity.MapActivity;
+import com.redblack.taksim.ui.activity.StartingLocation;
 import com.redblack.taksim.ui.interfaces.TaskLoadedCallback;
 import com.redblack.taksim.ui.logintype.MainType;
 import com.redblack.taksim.ui.logintype.server.Server;
@@ -94,7 +99,7 @@ public class Main extends FragmentActivity
     private boolean isContinue = false;
     private boolean isGPS = false;
 
-    private TextView edt_myAddress,edt_destination_address;
+    private TextView edt_myAddress,edt_destination_address,edt_starting_place;
 
     private Location location;
     private GoogleApiClient googleApiClient;
@@ -111,9 +116,9 @@ public class Main extends FragmentActivity
     private Polyline currentPolyline;
     private GoogleMap mMap;
 
-    private double get_latitude = 0.0;
-    private double get_longitude = 0.0;
-    private String get_adres = "";
+    private double get_latitude = 0.0 , get_selecting_origin_latitude = 0.0;
+    private double get_longitude = 0.0 , get_selecting_origin_longitude = 0.0;
+    private String get_adres = "" , get_selecting_origin_adres = "";
     private String getSavedAdres = "";
 
     private FetchURL fetchURL = null;
@@ -133,12 +138,17 @@ public class Main extends FragmentActivity
     private GetCars response_getCars;
     private ArrayList<ModelCars> car_list;
     Timer timer;
+    private ImageButton navMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+      //Remove title bar
+        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+      //Remove notification bar
+        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        setContentView(R.layout.main);
 
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -183,30 +193,47 @@ public class Main extends FragmentActivity
                 addOnConnectionFailedListener(this).build();
 
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         edt_myAddress = findViewById(R.id.edt_myLocation);
         edt_destination_address = findViewById(R.id.edt_destinationAddress);
+        edt_starting_place = findViewById(R.id.edt_myLocation);
         //edt_destination_address.setHint("Nereye gitmek istiyorsunuz?");
         //edt_destination_address.setTextColor(R.color.transparent);
+        navMenu = findViewById(R.id.btn_navmenu);
+        navMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.openDrawer(Gravity.LEFT);
+            }
+        });
 
 
         txt_km = findViewById(R.id.total_KM);
         txt_duration = findViewById(R.id.total_duration);
         txt_price = findViewById(R.id.total_price);
 
-        edt_destination_address.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+      //Selection of Destination address
+        edt_destination_address.setOnClickListener((View v) -> {
 
                 Intent a = new Intent(Main.this,MapActivity.class);
                 startActivityForResult(a,1);
+
+        });
+      //Selection of Starting Place
+        edt_starting_place.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent b = new Intent(Main.this,StartingLocation.class);
+                startActivityForResult(b,2);
             }
         });
 
 
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.TRANSPARENT);
+/*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setBackgroundColor(Color.TRANSPARENT);*/
 
 /*        // Status bar :: Transparent
         Window window = this.getWindow();
@@ -232,11 +259,12 @@ public class Main extends FragmentActivity
         navigationView.getMenu().getItem(9).setActionView(R.layout.menu_item_layout);
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        /*
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        toggle.syncState();*/
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -331,12 +359,16 @@ public class Main extends FragmentActivity
     private String getCityName(LatLng myCoordinates) {
 
         String myCity = "";
+        String province = "";
         String address = "";
+        String street = "";
         Geocoder geocoder = new Geocoder(Main.this, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(myCoordinates.latitude, myCoordinates.longitude,1);
             address = addresses.get(0).getAddressLine(0);
-            myCity = addresses.get(0).getLocality();
+            myCity = addresses.get(0).getAdminArea();
+            street = addresses.get(0).getSubLocality();
+            province = addresses.get(0).getFeatureName();
             Log.i("Addresses:","" + address);
             Log.i("City:",""+myCity);
 
@@ -344,29 +376,36 @@ public class Main extends FragmentActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return address;
+        return street + " " + province +  " " + myCity ;
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        MarkerOptions markerOptions;
         //first clear before maps
-        googleMap.clear();
-
         mMap = googleMap;
+        mMap.clear();
 
+      if(get_selecting_origin_latitude != 0.0 && get_selecting_origin_longitude != 0.0) {
+        //Selecting Starting Place
+          LatLng latLng = new LatLng(get_selecting_origin_latitude, get_selecting_origin_longitude);
+          markerOptions = new MarkerOptions().position(latLng).title("Konumum");
+          markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_human));
+          mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+          mMap.addMarker(markerOptions);
+          edt_starting_place.setText(get_selecting_origin_adres);
+      }else{
         //Current your Location
-        LatLng latLng = new LatLng(wayLatitude,wayLongitude);
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Konumum");
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_human));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
-        mMap.addMarker(markerOptions);
-
-
-        //Destination(Selected Location from Place)
+          LatLng latLng = new LatLng(wayLatitude, wayLongitude);
+          markerOptions = new MarkerOptions().position(latLng).title("Konumum");
+          markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_human));
+          mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+          mMap.addMarker(markerOptions);
+      }
+      //Destination(Selected Location from Place)
         if(get_latitude != 0.0 && get_longitude != 0.0){
-
+           //Stop taxi's update Location
             if(timer != null){
                 timer.cancel();
                 timer = null;
@@ -386,16 +425,12 @@ public class Main extends FragmentActivity
          lytTop = findViewById(R.id.lyt_top);
          lytTop.setVisibility(View.VISIBLE);
 
-
-
          //Direction route between two Location
             fetchURL = new FetchURL(Main.this);
             fetchURL.execute(getUrl(markerOptions.getPosition(), markerOptions3.getPosition(), "driving"), "driving");
         }
-        //Taxi Location(Default Location)
+        //Taxi's Location(Default Location)
         else {
-
-
             try {
                 //Create JsonObject to send WebService
                 jsonObject.put("lon",wayLongitude);
@@ -518,6 +553,9 @@ public class Main extends FragmentActivity
                             new PreferenceLoginSession(Main.this).clearPreference();
                             startActivity(new Intent(Main.this,MainType.class));
                             finish();
+
+                            //When user Logout,delete token
+                            Paper.book().delete("token");
 
                         }
                     })
@@ -661,15 +699,25 @@ public class Main extends FragmentActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == 1){
+          //Getting Location info of Destination address from MapActivity
             if(resultCode == RESULT_OK){
              //getting value of Selected Place information from MapActivity
                 get_adres = data.getStringExtra("place_adres");
-              //Saving Selected Loction Name
-                //Paper.book().write("SelectedLocation",get_adres);
-
                 get_latitude = Double.parseDouble(data.getStringExtra("latitude"));
                 get_longitude = Double.parseDouble(data.getStringExtra("longitude"));
             }
+        }
+      //Getting Location info of StartingPlace from StartingLocation
+        else if(requestCode == 2){
+            //Getting Location info of StartingPlace address from StartingLocation
+            if(resultCode == RESULT_OK){
+                get_selecting_origin_adres = data.getStringExtra("origin_place_adres");
+                get_selecting_origin_latitude = Double.parseDouble(data.getStringExtra("origin_latitude"));
+                get_selecting_origin_longitude = Double.parseDouble(data.getStringExtra("origin_longitude"));
+            }
+
+
+
         }
     }
 
@@ -845,23 +893,31 @@ public class Main extends FragmentActivity
             if(get_resultCode == 0){
 
                 if(car_list.size() > 0){
+                    //First Clear Map
+                    mMap.clear();
 
+                    if(get_selecting_origin_latitude == 0.0 && get_selecting_origin_longitude == 0.0) {
+                      //Current your Location
+                        LatLng latLng = new LatLng(wayLatitude, wayLongitude);
+                        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Konumum");
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_human));
+                        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                        mMap.addMarker(markerOptions);
+                    }else{
+                      //Selecting Starting Place
+                        LatLng latLng = new LatLng(get_selecting_origin_latitude, get_selecting_origin_longitude);
+                        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Konumum");
+                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_human));
+                        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                        mMap.addMarker(markerOptions);
+                    }
                     for(int i = 0; i<car_list.size(); i++){
-                        //First Clear Map
-                        mMap.clear();
 
                         LatLng latLng2 = new LatLng(car_list.get(i).getLat(),car_list.get(i).getLon());
                         MarkerOptions markerOptions2 = new MarkerOptions().position(latLng2).title(car_list.get(i).getCarNo());
                         markerOptions2.icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi_icon));
                         //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 9));
                         mMap.addMarker(markerOptions2);
-
-                        //Current your Location
-                        LatLng latLng = new LatLng(wayLatitude,wayLongitude);
-                        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Konumum");
-                        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_human));
-                        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                        mMap.addMarker(markerOptions);
                     }
                 }
             }

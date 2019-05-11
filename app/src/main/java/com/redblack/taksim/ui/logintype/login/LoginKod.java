@@ -24,6 +24,8 @@ import com.redblack.taksim.utils.PreferenceManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.paperdb.Paper;
+
 public class LoginKod extends AppCompatActivity implements View.OnClickListener {
 
     private ImageButton back,complete;
@@ -132,6 +134,9 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
                     //get Token
                         get_token = Server.token;
                         Log.i("token:","" + get_token);
+
+                        //saved token Paper db
+                        Paper.book().write("token",get_token);
 
                      //Save sharedPreferences of login to System
                         new PreferenceLoginSession(LoginKod.this).writePreference(get_token);
