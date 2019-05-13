@@ -19,12 +19,15 @@ import android.widget.Toast;
 
 import com.redblack.taksim.Main;
 import com.redblack.taksim.R;
+import com.redblack.taksim.model.User;
 import com.redblack.taksim.ui.logintype.login.LoginPhone;
 import com.redblack.taksim.ui.logintype.server.Server;
 import com.redblack.taksim.utils.Utility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.paperdb.Paper;
 
 public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
@@ -44,11 +47,15 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     private UpdateCustomer updateCustomer = null;
     private Integer get_resultCode = 15; //default value
     private CoordinatorLayout coordinatorLayout;
+    private String getNickName = "", getMailAddress = "";
+    private User user;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup);
+     //Paper initialize
+        Paper.init(SignUp.this);
 
         //get code and mhoneNumber form SignUpPhone
         extras = getIntent().getExtras();
@@ -180,6 +187,10 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                     try{
                         JSONObject jsonObject = new JSONObject(getVerifyCode_result);
                         get_resultCode = jsonObject.getInt("errCode");
+                        String getCustomerInfo = jsonObject.getString("customerInfo");
+                        JSONObject jsonObject_customerInfo = new JSONObject(getCustomerInfo);
+                        getNickName = jsonObject_customerInfo.getString("nickName");
+                        getMailAddress = jsonObject_customerInfo.getString("email");
                         Log.i("resultCode",""+get_resultCode);
                     }catch (JSONException e){
                         Log.i("Exception",e.getMessage());
@@ -207,6 +218,11 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                 Intent go_MainPage = new Intent(SignUp.this,Main.class);
                 go_MainPage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(go_MainPage);
+
+             //Save Paper Profil info of User
+                user = new User(getNickName,getMailAddress,get_mobilNo);
+                Paper.book().write("user_info",user);
+
             }
 
             else{

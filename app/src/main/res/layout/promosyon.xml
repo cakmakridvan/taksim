@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/waves_light">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back_grey"
+        android:background="@null"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/bck_btn_promosyon"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/promosyon_title"
+        android:textSize="20sp"
+        android:textColor="@color/title_activity"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bck_btn_promosyon"
+        android:textSize="16sp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/promosyon_kod"
+        android:textColor="@color/content_activity"
+        android:id="@+id/content_promosyon"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/content_promosyon"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:text="@string/promosyon_mesaj"
+        android:textColor="@color/title_activity"
+        android:id="@+id/content_mesaj"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/content_mesaj"
+        android:layout_margin="15dp"
+        android:id="@+id/edt_promosyonKod"
+        android:background="@drawable/bckgrnd_adsoyad"
+        android:paddingLeft="20dp"
+        android:singleLine="true"
+        />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/send"
+        android:layout_below="@+id/edt_promosyonKod"
+        android:layout_alignParentRight="true"
+        android:background="@null"
+        />
+
+</RelativeLayout>

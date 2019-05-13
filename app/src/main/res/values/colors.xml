@@ -6,4 +6,6 @@
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="transparent">#D3D3D3</color>
+    <color name="title_activity">#4F4F4F</color>
+    <color name="content_activity">#4A4A4A</color>
 </resources>

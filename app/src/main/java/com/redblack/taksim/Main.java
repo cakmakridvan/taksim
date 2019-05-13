@@ -55,8 +55,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.redblack.taksim.model.usablecars.GetCars;
 import com.redblack.taksim.model.usablecars.ModelCars;
+import com.redblack.taksim.ui.activity.Bildirimler;
 import com.redblack.taksim.ui.activity.CreditCard;
 import com.redblack.taksim.ui.activity.MapActivity;
+import com.redblack.taksim.ui.activity.Profil;
+import com.redblack.taksim.ui.activity.Promosyon;
 import com.redblack.taksim.ui.activity.StartingLocation;
 import com.redblack.taksim.ui.interfaces.TaskLoadedCallback;
 import com.redblack.taksim.ui.logintype.MainType;
@@ -514,12 +517,9 @@ public class Main extends FragmentActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profil) {
-            // Handle the camera action
+            startActivity(new Intent(Main.this,Profil.class));
         } else if (id == R.id.nav_creditkart) {
-
             startActivity(new Intent(Main.this,CreditCard.class));
-
-
 
 /*            MainFragment mainFragment = new MainFragment();
             FragmentManager fragmentManager = this.getSupportFragmentManager();
@@ -530,8 +530,12 @@ public class Main extends FragmentActivity
         } else if (id == R.id.nav_adreslerim) {
 
         } else if (id == R.id.nav_bildirimler) {
+            startActivity(new Intent(Main.this,Bildirimler.class));
+        }else if(id == R.id.nav_promosyon){
+            startActivity(new Intent(Main.this,Promosyon.class));
+        }
 
-        }else if(id == R.id.exit){
+        else if(id == R.id.exit){
 
             new SweetAlertDialog(Main.this, SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.uygulama_cikis))

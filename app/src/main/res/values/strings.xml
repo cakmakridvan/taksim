@@ -26,6 +26,10 @@
     <string name="google_server_key">AIzaSyB9HiJWCg4vKcZUSr8bH2LgqjdIAzeEey0</string>
     <string name="destination">Nereye gitmek istiyorsunuz?</string>
     <string name="starting_place">Başlangıç yerini seçiniz</string>
+    <string name="profil_title">Profilim</string>
+    <string name="promosyon_title">Promosyon</string>
+    <string name="promosyon_kod">Promosyon kodu kullan</string>
+    <string name="promosyon_mesaj">Bir indirim koduna mı sahipsiniz? Kodu aşağıdaki alana girin ve indiriminizi alın.</string>
 
 
 

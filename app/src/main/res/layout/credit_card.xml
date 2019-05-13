@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,7 +11,7 @@
             android:background="@null"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
-            android:id="@+id/bck_btn"
+            android:id="@+id/bck_btn_credit_card"
             />
 
          <TextView
@@ -23,9 +22,8 @@
              android:textColor="@color/black"
              android:layout_marginLeft="20dp"
              android:layout_marginTop="10dp"
-             android:layout_below="@+id/bck_btn"
+             android:layout_below="@+id/bck_btn_credit_card"
              android:id="@+id/txt_kart_bilgileri"
-
              />
 
         <EditText
@@ -36,20 +34,24 @@
             android:background="@drawable/bckgrnd_adsoyad"
             android:hint="Ad Soyad"
             android:paddingLeft="20dp"
-            android:id="@+id/edt_adsoyadi"
+            android:id="@+id/edt_kart_adsoyadi"
+            android:singleLine="true"
             />
 
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/edt_adsoyadi"
+            android:layout_below="@+id/edt_kart_adsoyadi"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/bckgrnd_adsoyad"
             android:hint="Kart Numarası"
             android:paddingLeft="20dp"
             android:id="@+id/edt_kart_numarasi"
+            android:inputType="phone"
+            android:maxLength="19"
+            android:singleLine="true"
             />
 
         <LinearLayout
@@ -63,14 +65,18 @@
             android:layout_marginRight="10dp"
             >
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/month"
-                    android:hint="MM/YY"
-                    android:paddingLeft="20dp"
-                    />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/month"
+                android:hint="MM/YY"
+                android:paddingLeft="20dp"
+                android:inputType="phone"
+                android:id="@+id/edt_kart_month"
+                android:maxLength="5"
+                android:singleLine="true"
+                />
 
 
                 <EditText
@@ -80,6 +86,10 @@
                     android:background="@drawable/month"
                     android:hint="CVV"
                     android:paddingLeft="20dp"
+                    android:inputType="phone"
+                    android:id="@+id/edt_kart_cvv"
+                    android:maxLength="3"
+                    android:singleLine="true"
                     />
 
 
@@ -93,8 +103,8 @@
             android:background="@null"
             android:layout_alignParentRight="true"
             android:layout_marginTop="40dp"
+            android:id="@+id/btn_kart_saved"
             />
-
 
         <ImageView
         android:layout_width="match_parent"
