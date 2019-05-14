@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/waves_light">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back_grey"
+        android:background="@null"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/bck_btn_yardim"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/yardim_title"
+        android:textSize="20sp"
+        android:textColor="@color/title_activity"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bck_btn_yardim"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/yardimbtnbckgrnd"
+        android:text="@string/hakkimizda_title"
+        android:gravity="left|center"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textColor="@color/title_activity"
+        android:id="@+id/btn_hakkimizda"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_hakkimizda"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/yardimbtnbckgrnd"
+        android:text="@string/odeme_title"
+        android:gravity="left|center"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textColor="@color/title_activity"
+        android:id="@+id/btn_odeme_politikasi"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_odeme_politikasi"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/yardimbtnbckgrnd"
+        android:text="@string/kullanim_title"
+        android:gravity="left|center"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textColor="@color/title_activity"
+        android:id="@+id/btn_kullanim_kosullari"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_kullanim_kosullari"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/yardimbtnbckgrnd"
+        android:text="@string/gizlilik_title"
+        android:gravity="left|center"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textColor="@color/title_activity"
+        android:id="@+id/btn_gizlilik"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_gizlilik"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/yardimbtnbckgrnd"
+        android:text="@string/geri_bildiri_title"
+        android:gravity="left|center"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
+        android:textColor="@color/title_activity"
+        android:id="@+id/btn_geri_bildiri"
+        />
+
+</RelativeLayout>

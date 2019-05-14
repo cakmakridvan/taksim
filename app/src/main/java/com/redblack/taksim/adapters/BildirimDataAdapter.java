@@ -34,7 +34,7 @@ public class BildirimDataAdapter extends RecyclerView.Adapter<BildirimDataAdapte
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(),"click on item: "+myListData.getMesaj(),Toast.LENGTH_LONG).show();
+                //Toast.makeText(view.getContext(),"click on item: "+myListData.getMesaj(),Toast.LENGTH_LONG).show();
             }
         });
     }

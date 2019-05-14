@@ -30,7 +30,14 @@
     <string name="promosyon_title">Promosyon</string>
     <string name="promosyon_kod">Promosyon kodu kullan</string>
     <string name="promosyon_mesaj">Bir indirim koduna mı sahipsiniz? Kodu aşağıdaki alana girin ve indiriminizi alın.</string>
-
+    <string name="bildirim_title">Bildirimler</string>
+    <string name="yardim_title">Yardım</string>
+    <string name="hakkimizda_title">Hakkımızda</string>
+    <string name="odeme_title">Ödeme Politikası</string>
+    <string name="kullanim_title">Kullanım Koşulları</string>
+    <string name="gizlilik_title">Gizlilik Politikası</string>
+    <string name="geri_bildiri_title">Geri Bildiri</string>
+    <string name="adreslerim_title">Adreslerim</string>
 
 
 </resources>

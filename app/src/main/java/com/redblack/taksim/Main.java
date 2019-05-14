@@ -61,6 +61,7 @@ import com.redblack.taksim.ui.activity.MapActivity;
 import com.redblack.taksim.ui.activity.Profil;
 import com.redblack.taksim.ui.activity.Promosyon;
 import com.redblack.taksim.ui.activity.StartingLocation;
+import com.redblack.taksim.ui.activity.Yardim;
 import com.redblack.taksim.ui.interfaces.TaskLoadedCallback;
 import com.redblack.taksim.ui.logintype.MainType;
 import com.redblack.taksim.ui.logintype.server.Server;
@@ -520,22 +521,15 @@ public class Main extends FragmentActivity
             startActivity(new Intent(Main.this,Profil.class));
         } else if (id == R.id.nav_creditkart) {
             startActivity(new Intent(Main.this,CreditCard.class));
-
-/*            MainFragment mainFragment = new MainFragment();
-            FragmentManager fragmentManager = this.getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame, mainFragment);
-            fragmentTransaction.commit();*/
-
         } else if (id == R.id.nav_adreslerim) {
 
         } else if (id == R.id.nav_bildirimler) {
             startActivity(new Intent(Main.this,Bildirimler.class));
         }else if(id == R.id.nav_promosyon){
             startActivity(new Intent(Main.this,Promosyon.class));
-        }
-
-        else if(id == R.id.exit){
+        }else if(id == R.id.nav_yardim){
+            startActivity(new Intent(Main.this,Yardim.class));
+        }else if(id == R.id.exit){
 
             new SweetAlertDialog(Main.this, SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.uygulama_cikis))
