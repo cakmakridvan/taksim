@@ -121,7 +121,7 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
             progressDialog.setMessage("\tLoading...");
             progressDialog.setCancelable(false);
             progressDialog.show();
-            //progressDialog.setContentView(R.layout.custom_progress);
+            progressDialog.setContentView(R.layout.custom_progress);
         }
 
         @Override

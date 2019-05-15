@@ -55,15 +55,19 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.redblack.taksim.model.usablecars.GetCars;
 import com.redblack.taksim.model.usablecars.ModelCars;
+import com.redblack.taksim.ui.activity.Adreslerim;
 import com.redblack.taksim.ui.activity.Bildirimler;
 import com.redblack.taksim.ui.activity.CreditCard;
 import com.redblack.taksim.ui.activity.MapActivity;
 import com.redblack.taksim.ui.activity.Profil;
 import com.redblack.taksim.ui.activity.Promosyon;
+import com.redblack.taksim.ui.activity.SikcaSorular;
 import com.redblack.taksim.ui.activity.StartingLocation;
 import com.redblack.taksim.ui.activity.Yardim;
+import com.redblack.taksim.ui.activity.Yolculuklarim;
 import com.redblack.taksim.ui.interfaces.TaskLoadedCallback;
 import com.redblack.taksim.ui.logintype.MainType;
+import com.redblack.taksim.ui.logintype.login.LoginKod;
 import com.redblack.taksim.ui.logintype.server.Server;
 import com.redblack.taksim.ui.mapdirection.PointsParser;
 import com.redblack.taksim.utils.GpsUtils;
@@ -80,7 +84,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -135,14 +141,18 @@ public class Main extends FragmentActivity
     private String get_totalPrice = "";
 
     private Integer get_resultCode = 15; //default value
-    private JSONObject jsonObject;
-    private String get_jsonObject = "";
+    private JSONObject jsonObject,jsonObject_order;
+    private String get_jsonObject = "",get_jsonOrder;
     private GetUsableCars getUsableCars = null;
     private String get_token = "";
     private GetCars response_getCars;
     private ArrayList<ModelCars> car_list;
     Timer timer;
     private ImageButton navMenu;
+    private ImageButton taksim_gelsin;
+    private CreateOrder createOrder = null;
+    private String cityName;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +163,11 @@ public class Main extends FragmentActivity
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.main);
+
+        //Progress Diaolog initialize
+        progressDialog = new ProgressDialog(Main.this);
+        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        progressDialog.setIndeterminate(true);
 
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -275,6 +290,7 @@ public class Main extends FragmentActivity
 
         //Create Json Object
         jsonObject = new JSONObject();
+        jsonObject_order = new JSONObject();
 
     }
 
@@ -422,9 +438,65 @@ public class Main extends FragmentActivity
             mMap.addMarker(markerOptions3);
             edt_destination_address.setText(get_adres);
 
-         //Show Invisible Layout at the bottom and top
+       //Show Invisible Layout at the bottom and top
          lytBottom = findViewById(R.id.lyt_bottom);
          lytBottom.setVisibility(View.VISIBLE);
+
+       //Show taksim gelsin button
+         taksim_gelsin = findViewById(R.id.imgbtn_taksim_gelsin);
+         taksim_gelsin.setOnClickListener((View) ->{
+
+             double startLat = 0.0 ,startLong = 0.0,  destLat = 0.0, destLon = 0.0;
+             String start_addrs = "", dest_adres = "";
+
+             dest_adres = get_adres;
+             destLat = get_latitude;
+             destLon = get_longitude;
+
+         //get CurrentDate and Time
+             String get_date = Utility.GetDateandTime();
+
+             if(get_selecting_origin_latitude != 0.0 && get_selecting_origin_longitude != 0.0) {
+              //if Start Location has changed
+                  startLat = get_selecting_origin_latitude;
+                  startLong = get_selecting_origin_longitude;
+                  start_addrs = get_selecting_origin_adres;
+              }else{
+               //Initialize Location
+                  startLat = wayLatitude;
+                  startLong = wayLongitude;
+                  start_addrs = cityName;
+               }
+
+             try{
+                 //Create JsonObject to send WebService
+                 jsonObject_order.put("mobile","5556632214"); //mobile number
+                 jsonObject_order.put("orderTime",get_date);
+                 jsonObject_order.put("orderAddrName",start_addrs);//order Addres Name
+                 jsonObject_order.put("orderLon",startLong);//order Longitude
+                 jsonObject_order.put("orderLat",startLat);//order Latitude
+                 jsonObject_order.put("destAddrName",dest_adres);//destination addres
+                 jsonObject_order.put("destLon",destLon);//destination longitude
+                 jsonObject_order.put("destLat",destLat);//destination latitude
+                 jsonObject_order.put("orderType",0);//orderType0,1 reserved
+                 jsonObject_order.put("remarks","remark");
+                 jsonObject_order.put("carType",1);
+                 jsonObject_order.put("isShared",0);
+                 //JsonObject to String
+                 get_jsonOrder = jsonObject_order.toString();
+             }catch(JSONException e){
+
+             }
+
+             //your method
+             Main.this.runOnUiThread(new Runnable() {
+                 @Override
+                 public void run() {
+                     createOrder = new CreateOrder(get_jsonOrder);
+                     createOrder.execute((Void) null);
+                 }
+             });
+         });
 
          lytTop = findViewById(R.id.lyt_top);
          lytTop.setVisibility(View.VISIBLE);
@@ -522,14 +594,19 @@ public class Main extends FragmentActivity
         } else if (id == R.id.nav_creditkart) {
             startActivity(new Intent(Main.this,CreditCard.class));
         } else if (id == R.id.nav_adreslerim) {
-
+            startActivity(new Intent(Main.this,Adreslerim.class));
         } else if (id == R.id.nav_bildirimler) {
             startActivity(new Intent(Main.this,Bildirimler.class));
         }else if(id == R.id.nav_promosyon){
             startActivity(new Intent(Main.this,Promosyon.class));
         }else if(id == R.id.nav_yardim){
             startActivity(new Intent(Main.this,Yardim.class));
-        }else if(id == R.id.exit){
+        }else if(id == R.id.nav_sss){
+            startActivity(new Intent(Main.this,SikcaSorular.class));
+        }else if(id == R.id.nav_yolculuklar){
+            startActivity(new Intent(Main.this,Yolculuklarim.class));
+        }
+        else if(id == R.id.exit){
 
             new SweetAlertDialog(Main.this, SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.uygulama_cikis))
@@ -591,7 +668,7 @@ public class Main extends FragmentActivity
 
             //Geocoding
             LatLng lat_lng = new LatLng(wayLatitude,wayLongitude);
-            String cityName = getCityName(lat_lng);
+            cityName = getCityName(lat_lng);
             edt_myAddress.setText(cityName);
 
     /*
@@ -918,6 +995,69 @@ public class Main extends FragmentActivity
                         mMap.addMarker(markerOptions2);
                     }
                 }
+            }
+
+            else{
+
+/*                Snackbar snackbar = Snackbar.make(coordinatorLayout, "İşlem Başarısız", Snackbar.LENGTH_LONG);
+                snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUp.this,R.color.colorAccent));
+                snackbar.show();*/
+
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+
+            getUsableCars = null;
+
+        }
+    }
+
+    public class CreateOrder extends AsyncTask<Void, Void, Boolean> {
+
+        private final String json;
+
+        CreateOrder(String json){
+
+            this.json = json;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setMessage("\tLoading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            progressDialog.setContentView(R.layout.custom_progress);
+
+            //progressDialog.setContentView(R.layout.custom_progress);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                String getUsableCars_result = Server.CreateOrder(json);
+                if(!getUsableCars_result.trim().equalsIgnoreCase("false")){
+
+                }else{
+                    get_resultCode = 0;
+                }
+
+            }catch (Exception e){
+                Log.i("Exception",e.getMessage());
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if(get_resultCode == 0){
+                progressDialog.dismiss();
             }
 
             else{

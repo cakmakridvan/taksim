@@ -33,6 +33,30 @@
         android:text="Kayıtlı Adreslerim"
         android:textColor="@color/content_activity"
         android:textSize="16sp"
+        android:id="@+id/txt_adreslerim"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="20dp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:id="@+id/recyclerView_adreslerim"
+        android:layout_below="@+id/txt_adreslerim"
+        tools:context=".ui.activity.MapActivity"/>
+
+
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recyclerView_adreslerim"
+        android:src="@drawable/btn_adres_ekle"
+        android:background="@null"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="40dp"
         />
 
 </RelativeLayout>

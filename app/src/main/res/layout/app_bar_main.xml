@@ -269,10 +269,10 @@
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/imgbtn_kartekle"
+                android:id="@+id/imgbtn_taksim_gelsin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/kartekle"
+                android:src="@drawable/btn_taksimgelsin"
                 android:background="@null"
 
                 />

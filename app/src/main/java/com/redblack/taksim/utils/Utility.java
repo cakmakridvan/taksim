@@ -1,9 +1,14 @@
 package com.redblack.taksim.utils;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 public class Utility {
+
+    private static SimpleDateFormat sdf;
+    private static String currentDateandTime;
 
     public static boolean isValidEmail(String email){
 
@@ -37,6 +42,13 @@ public class Utility {
 
         last_price = start_price + (per_km * get_km);
         return (new DecimalFormat("##.##").format(last_price) + " " + "TL"); //With Decimal fotmat, showing only two digit after decimal
+    }
+
+    public static String GetDateandTime(){
+        //get date and Time
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        currentDateandTime = sdf.format(new Date());
+        return  currentDateandTime;
     }
 
 

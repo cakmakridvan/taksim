@@ -66,6 +66,7 @@
             android:layout_weight="2"
             android:backgroundTint="@color/white"
             android:theme="@style/TextLabel"
+            android:hint="Adınız"
             />
 
             <ImageView
@@ -94,6 +95,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/white"
             android:theme="@style/TextLabel"
+            android:hint="Soyadınız"
             />
 
         <ImageView
@@ -120,6 +122,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/white"
             android:theme="@style/TextLabel"
+            android:hint="Teleon No"
 
             />
 
@@ -147,7 +150,9 @@
             android:backgroundTint="@color/white"
             android:singleLine="true"
             android:textColor="@color/white"
-            android:theme="@style/TextLabel" />
+            android:theme="@style/TextLabel"
+            android:hint="Mail Adresiniz"
+            />
 
         <ImageView
             android:layout_width="wrap_content"

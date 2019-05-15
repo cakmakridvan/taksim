@@ -115,7 +115,7 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
             progressDialog.setMessage("\tLoading...");
             progressDialog.setCancelable(false);
             progressDialog.show();
-            //progressDialog.setContentView(R.layout.custom_progress);
+            progressDialog.setContentView(R.layout.custom_progress);
         }
 
         @Override
