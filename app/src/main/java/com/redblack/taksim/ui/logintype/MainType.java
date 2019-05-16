@@ -26,7 +26,7 @@ public class MainType extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
 
      //Check of Logined System or Logout System
-        if(new PreferenceLoginSession(MainType.this).checkPreference()){
+        if(new PreferenceLoginSession(MainType.this).checkPreference()){ //it should be
 
             getSavedToken = new PreferenceLoginSession(MainType.this).getToken();
             Log.i("getSavedToken","" + getSavedToken);

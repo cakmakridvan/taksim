@@ -274,7 +274,7 @@ public class Server {
 
     }
 
-    public static String CreateOrder(String obj) {
+    public static String CreateOrder(String obj,String token) {
 
         String method_Login = "CreateOrder.do";
 
@@ -291,6 +291,7 @@ public class Server {
             conn.setConnectTimeout(15000 /* milliseconds */);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+            conn.setRequestProperty("_token",token);
             conn.setDoInput(true);
             conn.setDoOutput(true);
 

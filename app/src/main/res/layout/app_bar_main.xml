@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/lyt_coordinator_main"
     tools:context=".Main">
 
 
@@ -95,6 +96,8 @@
                     android:focusable="false"
                     android:background="@android:color/transparent"
                     android:hint="@string/starting_place"
+                    android:textColorHint="@color/adres_hint"
+                    android:textColor="@color/black"
                     />
 
                 </LinearLayout>
@@ -149,6 +152,8 @@
                     android:background="@android:color/transparent"
                     android:hint="@string/destination"
                     android:clickable="true"
+                    android:textColorHint="@color/adres_hint"
+                    android:textColor="@color/black"
                     />
                 </LinearLayout>
 

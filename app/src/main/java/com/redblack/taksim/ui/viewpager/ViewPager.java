@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import com.redblack.taksim.R;
 import com.redblack.taksim.adapters.ViewPagerAdapter;
 import com.redblack.taksim.ui.logintype.MainType;
+import com.redblack.taksim.utils.PreferenceLoginSession;
 import com.redblack.taksim.utils.PreferenceManager;
 
 
@@ -32,7 +33,13 @@ public class ViewPager extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
 
      //Check of Intro Slider is show or not
-         if(new PreferenceManager(ViewPager.this).checkPreference()){
+/*         if(new PreferenceManager(ViewPager.this).checkPreference()){ //it should be
+
+            loadHome();
+        }*/
+
+        //Check of Logined System or Logout System
+        if(new PreferenceLoginSession(ViewPager.this).checkPreference()){
 
             loadHome();
         }

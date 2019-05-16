@@ -9,16 +9,16 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/taksim_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/taksim_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon"
         >
         <activity
             android:name=".ui.splash.Splash"
-            android:label="Giriş"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -69,15 +69,20 @@
         <activity
             android:name=".ui.logintype.signup.SignUp"
             android:label="@string/app_name"
-            android:theme="@style/AppThemeNoAction" />
+            android:theme="@style/AppThemeNoAction"
+            />
         <activity
             android:name=".ui.logintype.login.LoginPhone"
             android:label="@string/app_name"
-            android:theme="@style/AppThemeNoAction" />
+            android:theme="@style/AppThemeNoAction"
+            android:windowSoftInputMode="adjustPan"
+            />
         <activity
             android:name=".ui.logintype.login.LoginKod"
             android:label="@string/app_name"
-            android:theme="@style/AppThemeNoAction" />
+            android:theme="@style/AppThemeNoAction"
+            android:windowSoftInputMode="adjustPan"
+            />
 
         <activity
             android:name=".ui.activity.MapActivity"

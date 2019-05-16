@@ -1,7 +1,9 @@
 package com.redblack.taksim.ui.logintype.signup;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,7 +11,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -143,11 +147,7 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
                         get_token = Server.token;
                         Log.i("token:","" + get_token);
 
-                        //saved token Paper db
-                        Paper.book().write("token",get_token);
 
-                    //Save sharedPreferences of login to System
-                        new PreferenceLoginSession(SignUpPhoneKod.this).writePreference(get_token);
 
 
                     }catch (JSONException e){
@@ -172,6 +172,12 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
             if(get_mesaj_result.equals("true")){
                 progressDialog.dismiss();
 
+                //saved token Paper db
+                Paper.book().write("token",get_token);
+
+                //Save sharedPreferences of login to System
+                new PreferenceLoginSession(SignUpPhoneKod.this).writePreference(get_token);
+
                 Intent go_signup = new Intent(SignUpPhoneKod.this,SignUp.class);
                 go_signup.putExtra("mobileNO",get_number);
                 go_signup.putExtra("token",get_token);
@@ -189,5 +195,23 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
             customerLoginm = null;
             progressDialog.dismiss();
         }
+    }
+
+    //Motion Gesture for remove keyboard
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent( event );
     }
 }

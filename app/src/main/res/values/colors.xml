@@ -9,4 +9,5 @@
     <color name="title_activity">#4F4F4F</color>
     <color name="content_activity">#4A4A4A</color>
     <color name="transparent_color">#10000000</color>
+    <color name="adres_hint">#B3B6B7</color>
 </resources>
