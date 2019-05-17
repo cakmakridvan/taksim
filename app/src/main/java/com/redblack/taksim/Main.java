@@ -336,11 +336,7 @@ public class Main extends FragmentActivity
             @Override
             public void gpsStatus(boolean isGPSEnable) {
                 // turn on GPS
-
-
                 isGPS = isGPSEnable;
-
-
             }
         });
 
@@ -462,9 +458,9 @@ public class Main extends FragmentActivity
          taksim_gelsin.setOnClickListener(Main.this);
 
 
-
-         lytTop = findViewById(R.id.lyt_top);
-         lytTop.setVisibility(View.VISIBLE);
+      //Payments options layout visible
+/*         lytTop = findViewById(R.id.lyt_top);
+         lytTop.setVisibility(View.VISIBLE);*/
 
          //Direction route between two Location
             fetchURL = new FetchURL(Main.this);

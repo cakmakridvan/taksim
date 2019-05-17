@@ -21,12 +21,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.redblack.taksim.Main;
 import com.redblack.taksim.R;
+import com.redblack.taksim.model.User;
 import com.redblack.taksim.ui.logintype.server.Server;
 import com.redblack.taksim.ui.logintype.signup.SignUp;
 import com.redblack.taksim.ui.logintype.signup.SignUpPhoneKod;
 import com.redblack.taksim.ui.viewpager.ViewPager;
+import com.redblack.taksim.utils.GpsUtils;
 import com.redblack.taksim.utils.PreferenceLoginSession;
 import com.redblack.taksim.utils.PreferenceManager;
 
@@ -49,6 +52,9 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
     private CustomerLoginm customerLoginm = null;
     private EditText edt_kod;
     private CoordinatorLayout coordinatorLayout;
+    private String getMail = "", getNickName = "", getNumber = "", userId ="";
+    private User user;
+    private boolean isGPS = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +89,19 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
 
         back.setOnClickListener(this);
         complete.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
+            @Override
+            public void gpsStatus(boolean isGPSEnable) {
+                // turn on GPS
+                isGPS = isGPSEnable;
+            }
+        });
     }
 
     @Override
@@ -143,6 +162,13 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
 
                         JSONObject jsonObject = new JSONObject(getVerifyMobile_result);
                         get_resultCode = jsonObject.getInt("errCode");
+                        JSONObject jsonObject_customerInfo = jsonObject.getJSONObject("customerInfo");
+                        getMail = jsonObject_customerInfo.getString("email");
+                        getNickName = jsonObject_customerInfo.getString("nickName");
+                        userId = jsonObject_customerInfo.getString("userId");
+                        JSONObject jsonObject_currentOrder = jsonObject.getJSONObject("currentOrder");
+                        getNumber = jsonObject_currentOrder.getString("orderTel");
+
 
                         Log.i("GetresultCode:","" + get_resultCode);
 
@@ -175,6 +201,10 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
 
                 //saved token Paper db
                 Paper.book().write("token",get_token);
+
+                //Save Paper Profil info of User
+                user = new User(getNickName,getMail,getNumber);
+                Paper.book().write("user_info",user);
 
                 //Save sharedPreferences of login to System
                 new PreferenceLoginSession(LoginKod.this).writePreference(get_token);

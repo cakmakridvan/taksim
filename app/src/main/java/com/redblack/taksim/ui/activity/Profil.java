@@ -47,7 +47,17 @@ public class Profil extends AppCompatActivity {
             getMail = user.getMailUser();
             getNumber = user.getMobilNoUser();
 
-            name.setText(getName);
+         //Split String to getting Name and LastName as a separate
+            String[] tokens = getName.split(" ");
+            if(tokens.length!=2){
+                name.setText(getName);
+            }else{
+                String custumer_name = tokens[0];
+                String customer_lastname = tokens[1];
+                name.setText(custumer_name);
+                lastName.setText(customer_lastname);
+            }
+
             mail.setText(getMail);
             phone.setText(getNumber);
         }

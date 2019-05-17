@@ -3,11 +3,15 @@ package com.redblack.taksim.ui.logintype.signup;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,10 +20,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.redblack.taksim.R;
-import com.redblack.taksim.ui.logintype.login.LoginKod;
+import com.redblack.taksim.ui.logintype.login.LoginPhone;
 import com.redblack.taksim.ui.logintype.server.Server;
+import com.redblack.taksim.utils.GpsUtils;
 import com.redblack.taksim.utils.PreferenceLoginSession;
 
 import org.json.JSONException;
@@ -31,7 +37,7 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
 
     private ImageButton back,next;
     private ProgressDialog progressDialog;
-    private String get_mesaj_result = "";
+    private Integer get_resultCode = 15;
     private Bundle extras;
     private String get_kod = "";
     private String get_number = "";
@@ -41,11 +47,15 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
     private String get_jsonObject = "";
     private CustomerLoginm customerLoginm = null;
     private String get_token = "";
+    private boolean isGPS = false;
+    private CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_phone_kod);
+
+        coordinatorLayout = findViewById(R.id.lyt_coordinator_signup_phonekod);
 
         //Initialize Paper
         Paper.init(SignUpPhoneKod.this);
@@ -74,6 +84,19 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
         back.setOnClickListener(this);
         next.setOnClickListener(this);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        new GpsUtils(this).turnGPSOn(new GpsUtils.onGpsListener() {
+            @Override
+            public void gpsStatus(boolean isGPSEnable) {
+                // turn on GPS
+                isGPS = isGPSEnable;
+            }
+        });
     }
 
     @Override
@@ -139,8 +162,8 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
                     try{
 
                         JSONObject jsonObject = new JSONObject(getVerifyMobile_result);
+                        get_resultCode = jsonObject.getInt("errCode");
                         //String get_verifyMobile = jsonObject.getString("verifyCode");
-                        get_mesaj_result = "true";
                         Log.i("jsonObject",""+jsonObject);
 
                         //get Token
@@ -154,7 +177,7 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
                         Log.i("Exception",e.getMessage());
                     }
                 }else{
-                    get_mesaj_result = "false";
+                    get_resultCode = 15;
                 }
 
             }catch (Exception e){
@@ -169,7 +192,7 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
             super.onPostExecute(aBoolean);
 
 
-            if(get_mesaj_result.equals("true")){
+            if(get_resultCode == 0){
                 progressDialog.dismiss();
 
                 //saved token Paper db
@@ -186,6 +209,13 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
 
             else{
                 progressDialog.dismiss();
+
+                Snackbar snackbar = Snackbar.make(coordinatorLayout, "İşlem Başarısız", Snackbar.LENGTH_LONG);
+                snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUpPhoneKod.this,R.color.colorAccent));
+                View snackbarView = snackbar.getView();
+                TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                textView.setTextColor(Color.WHITE);
+                snackbar.show();
             }
         }
 

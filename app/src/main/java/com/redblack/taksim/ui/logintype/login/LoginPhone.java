@@ -54,13 +54,7 @@ public class LoginPhone extends AppCompatActivity implements View.OnClickListene
         coordinatorLayout = findViewById(R.id.lyt_coordinator_login_phone);
 
         //get code and mhoneNumber form SignUpPhone
-        extras = getIntent().getExtras();
-        if(extras != null){
 
-            get_mobilNo = extras.getString("mobileNO");
-        }
-
-        phoneNumber.setText(get_mobilNo);
 
         jsonObject = new JSONObject();
 
@@ -88,21 +82,32 @@ public class LoginPhone extends AppCompatActivity implements View.OnClickListene
             case R.id.btn_next_login_phone:
                 //startActivity(new Intent(this,LoginKod.class));
 
-                try {
-                    //Create JsonObject to send WebService
-                    jsonObject.put("mobile",get_mobilNo);
-                    jsonObject.put("debug",1);
-                    jsonObject.put("type",1);
-                    //JsonObject to String
-                    get_jsonObject = jsonObject.toString();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                get_mobilNo = phoneNumber.getText().toString();
+                if(get_mobilNo.length() < 10){
+                    Snackbar snackbar = Snackbar.make(coordinatorLayout, "Numaranızı Kontrol Ediniz", Snackbar.LENGTH_LONG);
+                    snackbar.getView().setBackgroundColor(ContextCompat.getColor(LoginPhone.this,R.color.colorAccent));
+                    View snackbarView = snackbar.getView();
+                    TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.WHITE);
+                    snackbar.show();
+
+                }else {
+                    try {
+                        //Create JsonObject to send WebService
+                        jsonObject.put("mobile", get_mobilNo);
+                        jsonObject.put("debug", 1);
+                        jsonObject.put("type", 1);
+                        //JsonObject to String
+                        get_jsonObject = jsonObject.toString();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    verifyCode = new VerifyCode(get_jsonObject);
+                    verifyCode.execute((Void) null);
+
+                    break;
                 }
-
-                verifyCode = new VerifyCode(get_jsonObject);
-                verifyCode.execute((Void) null);
-
-                break;
         }
     }
 

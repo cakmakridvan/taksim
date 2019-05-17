@@ -3,6 +3,7 @@ package com.redblack.taksim.ui.logintype.signup;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -18,8 +19,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.redblack.taksim.R;
+import com.redblack.taksim.ui.logintype.login.LoginPhone;
 import com.redblack.taksim.ui.logintype.server.Server;
 import com.redblack.taksim.utils.Utility;
 
@@ -32,7 +35,7 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
     private EditText number;
     private String getNumber = "";
     private ProgressDialog progressDialog;
-    private String get_mesaj_result = "";
+    private Integer get_resultCode = 15;
     private VerifyCode verifyCode = null;
     private JSONObject jsonObject;
     private String get_jsonObject = "";
@@ -81,7 +84,11 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
 
                     Snackbar snackbar = Snackbar.make(coordinatorLayout, "Numaranızı Kontrol Edin", Snackbar.LENGTH_LONG);
                     snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUpPhone.this,R.color.colorAccent));
+                    View snackbarView = snackbar.getView();
+                    TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.WHITE);
                     snackbar.show();
+
                 }
 
                 else{
@@ -101,7 +108,6 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
 
                     verifyCode = new VerifyCode(get_jsonObject);
                     verifyCode.execute((Void) null);
-
 
                 }
 
@@ -138,7 +144,7 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
 
                         JSONObject jsonObject = new JSONObject(getVerifyCode_result);
                         get_verifyCode = jsonObject.getString("verifyCode");
-                        get_mesaj_result = "true";
+                        get_resultCode = jsonObject.getInt("errCode");
                         Log.i("verifyCode",""+get_verifyCode);
 
 
@@ -146,7 +152,7 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
                         Log.i("Exception",e.getMessage());
                     }
                 }else{
-                    get_mesaj_result = "false";
+                    get_resultCode = 15;
                 }
 
             }catch (Exception e){
@@ -161,7 +167,7 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
             super.onPostExecute(aBoolean);
 
 
-            if(get_mesaj_result.equals("true")){
+            if(get_resultCode == 0){
                 progressDialog.dismiss();
 
              //Send data to SignUpPhoneKod
@@ -169,10 +175,15 @@ public class SignUpPhone extends AppCompatActivity implements View.OnClickListen
                 go_signUpPhoneKod.putExtra("kod",get_verifyCode);
                 go_signUpPhoneKod.putExtra("mobilNo",numberPhone);
                 startActivity(go_signUpPhoneKod);
-            }
-
-            else{
+            }else{
                 progressDialog.dismiss();
+
+                Snackbar snackbar = Snackbar.make(coordinatorLayout, "İşlem Başarısız", Snackbar.LENGTH_LONG);
+                snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUpPhone.this,R.color.colorAccent));
+                View snackbarView = snackbar.getView();
+                TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                textView.setTextColor(Color.WHITE);
+                snackbar.show();
             }
         }
 
