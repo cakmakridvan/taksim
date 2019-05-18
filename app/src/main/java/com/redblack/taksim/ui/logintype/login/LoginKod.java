@@ -114,20 +114,28 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
 
             case R.id.btn_next_login_code:
 
-                try {
-                    //Create JsonObject to send WebService
-                    jsonObject.put("mobile",get_mobilNo);
-                    jsonObject.put("verifyCode",get_kod);
-                    //JsonObject to String
-                    get_jsonObject = jsonObject.toString();
+                String get_enteredKod = edt_kod.getText().toString();
+                if(get_enteredKod.equals(get_kod)) {
+                    try {
+                        //Create JsonObject to send WebService
+                        jsonObject.put("mobile", get_mobilNo);
+                        jsonObject.put("verifyCode", get_kod);
+                        //JsonObject to String
+                        get_jsonObject = jsonObject.toString();
 
-                 //Send Service
-                    customerLoginm = new CustomerLoginm(get_jsonObject);
-                    customerLoginm.execute((Void) null);
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                        //Send Service
+                        customerLoginm = new CustomerLoginm(get_jsonObject);
+                        customerLoginm.execute((Void) null);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    Snackbar snackbar = Snackbar.make(coordinatorLayout, "Girilen kod hatalı", Snackbar.LENGTH_LONG);
+                    snackbar.getView().setBackgroundColor(ContextCompat.getColor(LoginKod.this,R.color.colorAccent));
+                    View snackbarView = snackbar.getView();
+                    TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.WHITE);
+                    snackbar.show();
                 }
 
                 break;

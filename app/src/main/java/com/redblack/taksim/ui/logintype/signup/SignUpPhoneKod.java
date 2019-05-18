@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.redblack.taksim.R;
+import com.redblack.taksim.ui.logintype.login.LoginKod;
 import com.redblack.taksim.ui.logintype.login.LoginPhone;
 import com.redblack.taksim.ui.logintype.server.Server;
 import com.redblack.taksim.utils.GpsUtils;
@@ -112,8 +113,7 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
 
                 get_enteredKod = entered_kod.getText().toString();
 
-                if(!TextUtils.isEmpty(get_enteredKod)){
-
+                if(get_enteredKod.equals(get_kod)){
                     try {
                         //Create JsonObject to send WebService
                         jsonObject.put("mobile",get_number);
@@ -128,6 +128,13 @@ public class SignUpPhoneKod extends AppCompatActivity implements View.OnClickLis
                         e.printStackTrace();
                     }
 
+                }else{
+                    Snackbar snackbar = Snackbar.make(coordinatorLayout, "Girilen kod hatalı", Snackbar.LENGTH_LONG);
+                    snackbar.getView().setBackgroundColor(ContextCompat.getColor(SignUpPhoneKod.this,R.color.colorAccent));
+                    View snackbarView = snackbar.getView();
+                    TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setTextColor(Color.WHITE);
+                    snackbar.show();
                 }
 
                 break;
