@@ -55,6 +55,7 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
     private String getMail = "", getNickName = "", getNumber = "", userId ="";
     private User user;
     private boolean isGPS = false;
+    private Integer getOrderId = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -174,10 +175,12 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
                         getMail = jsonObject_customerInfo.getString("email");
                         getNickName = jsonObject_customerInfo.getString("nickName");
                         userId = jsonObject_customerInfo.getString("userId");
-                        JSONObject jsonObject_currentOrder = jsonObject.getJSONObject("currentOrder");
-                        getNumber = jsonObject_currentOrder.getString("orderTel");
+                        if(jsonObject.getJSONObject("currentOrder") != null) {
+                            JSONObject jsonObject_currentOrder = jsonObject.getJSONObject("currentOrder");
+                            getNumber = jsonObject_currentOrder.getString("orderTel");
+                            getOrderId = jsonObject_currentOrder.getInt("orderId");
 
-
+                        }
                         Log.i("GetresultCode:","" + get_resultCode);
 
                     //get Token
@@ -188,7 +191,7 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
                     }catch (JSONException e){
                         Log.i("Exception",e.getMessage());
                     }
-                }else{
+                } else{
                     get_resultCode = 15;
                 }
 
@@ -209,6 +212,9 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
 
                 //saved token Paper db
                 Paper.book().write("token",get_token);
+
+                    //Save OrderId to Paper
+                Paper.book().write("orderID", getOrderId);
 
                 //Save Paper Profil info of User
                 user = new User(getNickName,getMail,getNumber);

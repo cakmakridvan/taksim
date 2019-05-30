@@ -145,21 +145,25 @@ public class Main extends FragmentActivity
     private LinearLayout lytBottom,lytTop;
     private String get_totalPrice = "";
 
-    private Integer get_resultCode = 15 , get_resultError = 15; //default value
-    private JSONObject jsonObject,jsonObject_order;
-    private String get_jsonObject = "",get_jsonOrder;
+    private Integer get_resultCode = 15 , get_resultError = 15 , get_CancelResultError = 15 , get_OrderTrackingError = 15; //default value
+    private JSONObject jsonObject,jsonObject_order,jsonObject_cancel,jsonObject_getOrderTracking;
+    private String get_jsonObject = "",get_jsonOrder = "",get_jsonCancel = "",get_jsonOrderTracking = "";
     private GetUsableCars getUsableCars = null;
     private String get_token = "";
     private GetCars response_getCars;
     private ArrayList<ModelCars> car_list;
-    Timer timer;
-    private ImageButton navMenu;
+    Timer timer,timer_orderTracking;
+    private ImageButton navMenu,btn_cancelOrder;
     private ImageButton taksim_gelsin;
     private CreateOrder createOrder = null;
     private String cityName;
-    private ProgressDialog progressDialog;
+    private ProgressDialog progressDialog,progressDialogCancelOrder;
     private CoordinatorLayout coordinatorLayout;
     private SweetAlertDialog sweetAlertDialog;
+    private CancelOrder cancelOrder = null;
+    private Integer get_orderID = 0;
+    private Integer getNewOrder_id = 0;
+    private GetOrderTracking getOrderTracking = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +180,11 @@ public class Main extends FragmentActivity
         progressDialog = new ProgressDialog(Main.this);
         progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         progressDialog.setIndeterminate(true);
+
+        //Progress Diaolog initialize
+        progressDialogCancelOrder = new ProgressDialog(Main.this);
+        progressDialogCancelOrder.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        progressDialogCancelOrder.setIndeterminate(true);
 
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -198,7 +207,9 @@ public class Main extends FragmentActivity
         //get Token from Paper
           get_token = Paper.book().read("token");
 
-        timer=new Timer();
+
+        timer = new Timer();
+        timer_orderTracking = new Timer();
 
         // we add permissions we need to request location of the users
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -233,6 +244,9 @@ public class Main extends FragmentActivity
                 drawer.openDrawer(Gravity.LEFT);
             }
         });
+
+        btn_cancelOrder = findViewById(R.id.cancelOrder);
+        btn_cancelOrder.setOnClickListener(Main.this);
 
         coordinatorLayout = findViewById(R.id.lyt_coordinator_main);
 
@@ -300,6 +314,8 @@ public class Main extends FragmentActivity
         //Create Json Object
         jsonObject = new JSONObject();
         jsonObject_order = new JSONObject();
+        jsonObject_cancel = new JSONObject();
+        jsonObject_getOrderTracking = new JSONObject();
 
     }
 
@@ -368,8 +384,6 @@ public class Main extends FragmentActivity
 
 
     }
-
-
 
     private boolean checkPlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
@@ -497,14 +511,11 @@ public class Main extends FragmentActivity
                 }, 0, 5000);//put here time 1000 milliseconds=1 second
             }
 
-
-
 /*            LatLng latLng2 = new LatLng(41.113130, 29.020156);
             MarkerOptions markerOptions2 = new MarkerOptions().position(latLng2).title("taxi");
             markerOptions2.icon(BitmapDescriptorFactory.fromResource(R.drawable.taxi_icon));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 9));
             mMap.addMarker(markerOptions2);*/
-
 
         }
     }
@@ -851,6 +862,21 @@ public class Main extends FragmentActivity
                         }
                     });
 
+                break;
+
+            case R.id.cancelOrder:
+
+                get_orderID = Paper.book().read("orderID");
+
+                try {
+                    jsonObject_cancel.put("orderId",get_orderID);
+                    jsonObject_cancel.put("reason",0);
+                    get_jsonCancel = jsonObject_cancel.toString();
+                }catch(JSONException e){
+
+                }
+                cancelOrder = new CancelOrder(get_jsonCancel,get_token);
+                cancelOrder.execute((Void) null);
 
                 break;
         }
@@ -975,12 +1001,16 @@ public class Main extends FragmentActivity
                 if(!getUsableCars_result.trim().equalsIgnoreCase("false")){
                     try{
                         response_getCars = new Gson().fromJson(getUsableCars_result,GetCars.class);
-                        car_list = response_getCars.getData_list();
-                        Log.i("UsableCarList",""+car_list);
+                        if(response_getCars != null) {
+                            car_list = response_getCars.getData_list();
+                            Log.i("UsableCarList", "" + car_list);
 
-                        JSONObject jsonObject = new JSONObject(getUsableCars_result);
-                        get_resultCode = jsonObject.getInt("errCode");
-                        Log.i("resultCode",""+get_resultCode);
+                            JSONObject jsonObject = new JSONObject(getUsableCars_result);
+                            get_resultCode = jsonObject.getInt("errCode");
+                            Log.i("resultCode", "" + get_resultCode);
+                        }else{
+                            get_resultCode = 15;
+                        }
                     }catch (JSONException e){
                         Log.i("Exception",e.getMessage());
                     }
@@ -1079,6 +1109,7 @@ public class Main extends FragmentActivity
 
                     JSONObject jsonObject = new JSONObject(getUsableCars_result);
                     get_resultError = jsonObject.getInt("errCode");
+                    getNewOrder_id = jsonObject.getInt("orderId");
                     Log.i("resultErrorCode",""+get_resultError);
 
                 }else{
@@ -1100,6 +1131,33 @@ public class Main extends FragmentActivity
 
               //Success Message
                 progressDialog.dismiss();
+                //Save New OrderId to Paper
+                Paper.book().write("orderID",getNewOrder_id);
+
+                try {
+                    jsonObject_getOrderTracking.put("orderId",getNewOrder_id);
+                    get_jsonOrderTracking = jsonObject_getOrderTracking.toString();
+                }catch (JSONException e){
+
+                }
+
+                timer_orderTracking.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        //your method
+                        Main.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getOrderTracking = new GetOrderTracking(get_jsonOrderTracking,get_token);
+                                getOrderTracking.execute((Void) null);
+                            }
+                        });
+
+
+                    }
+                }, 0, 5000);//put here time 1000 milliseconds=1 second
+
+
             }else if(get_resultError == 503){
                 progressDialog.dismiss();
                 Snackbar snackbar = Snackbar.make(coordinatorLayout, "Araçlar şu an için uygun değil", Snackbar.LENGTH_LONG);
@@ -1127,6 +1185,148 @@ public class Main extends FragmentActivity
         }
     }
 
+    public class CancelOrder extends AsyncTask<Void, Void, Boolean> {
+
+        private final String json;
+        private final String token;
+
+        CancelOrder(String json,String token){
+
+            this.json = json;
+            this.token = token;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialogCancelOrder.setMessage("\tLoading...");
+            progressDialogCancelOrder.setCancelable(false);
+            progressDialogCancelOrder.show();
+            progressDialogCancelOrder.setContentView(R.layout.custom_progress);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                String getCancel_result = Server.CancelOrder(json,token);
+                if(!getCancel_result.trim().equalsIgnoreCase("false")){
+
+                    JSONObject jsonObject = new JSONObject(getCancel_result);
+                    get_CancelResultError = jsonObject.getInt("errCode");
+                    Log.i("resultErrorCode",""+get_CancelResultError);
+
+                }else{
+                    get_CancelResultError = 15;
+                }
+
+            }catch (Exception e){
+                Log.i("Exception",e.getMessage());
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if(get_CancelResultError == 0){
+
+                //Success Message
+                progressDialogCancelOrder.dismiss();
+            }else{
+                progressDialogCancelOrder.dismiss();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            progressDialogCancelOrder.dismiss();
+            cancelOrder = null;
+        }
+    }
+
+    public class GetOrderTracking extends AsyncTask<Void, Void, Boolean> {
+
+        private final String json;
+        private final String token;
+
+        GetOrderTracking(String json,String token){
+            this.json = json;
+            this.token = token;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                String getOrderTracking_result = Server.GetOrderTracking(json,token);
+                if(!getOrderTracking_result.trim().equalsIgnoreCase("false")){
+
+                    JSONObject jsonObject = new JSONObject(getOrderTracking_result);
+                    get_OrderTrackingError = jsonObject.getInt("errCode");
+                 //Order Status
+                    if(jsonObject.getJSONObject("orderStatus") != null) {
+                        JSONObject getOrder_status = jsonObject.getJSONObject("orderStatus");
+                        Integer order_status = getOrder_status.getInt("orderStatus");
+                        String cancel_reason = getOrder_status.getString("cancelReason");
+                        Integer order_id = getOrder_status.getInt("orderId");
+                        Integer payment = getOrder_status.getInt("payment");
+                    }else{
+                        get_OrderTrackingError = 15;
+                    }
+                 //Car Info
+                    if(jsonObject.getJSONObject("carInfo") != null) {
+                        JSONObject getCar_info = jsonObject.getJSONObject("carInfo");
+                        String getCar_no = getCar_info.getString("carNo");
+                        double getCar_lat = getCar_info.getDouble("lat");
+                        double getCar_lon = getCar_info.getDouble("lon");
+                    }else{
+                        get_OrderTrackingError = 15;
+                    }
+                 //Driver Info
+                    if(jsonObject.getJSONObject("driverInfo") != null) {
+                        JSONObject getDriver_info = jsonObject.getJSONObject("driverInfo");
+                        String getDriver_mobile = getDriver_info.getString("driverMobile");
+                        String getDriver_name = getDriver_info.getString("driverName");
+                        String getDriver_photo = getDriver_info.getString("photo");
+                        Log.i("resultErrorCode", "" + get_OrderTrackingError);
+                    }else{
+                        get_OrderTrackingError = 15;
+                    }
+                }else{
+                    get_OrderTrackingError = 15;
+                }
+
+            }catch (Exception e){
+                Log.i("Exception",e.getMessage());
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+
+            if(get_OrderTrackingError == 0){
+
+                //Success Message
+            }else{
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            getOrderTracking = null;
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -1135,5 +1335,10 @@ public class Main extends FragmentActivity
             timer.cancel();
             timer = null;
         }
+        if(timer_orderTracking != null){
+            timer_orderTracking.cancel();
+            timer_orderTracking = null;
+        }
+
     }
 }

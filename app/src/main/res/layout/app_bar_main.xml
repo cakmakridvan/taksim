@@ -7,9 +7,6 @@
     android:id="@+id/lyt_coordinator_main"
     tools:context=".Main">
 
-
-
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -63,6 +60,14 @@
                 android:layout_marginTop="20dp"
                 android:background="@null"
                 android:id="@+id/btn_navmenu"
+                />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cancelOrder"
+                android:src="@drawable/send"
+                android:background="@null"
                 />
 
         <LinearLayout
@@ -221,8 +226,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="3"
-                >
+                android:weightSum="3">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -283,6 +287,111 @@
                 />
 
         </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/lyt_bottom_driver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@drawable/bcgrnd_driver"
+            android:visibility="gone"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
+
+
+               <ImageButton
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:src="@drawable/driver_avatar"
+                   android:background="@null"
+                   android:layout_alignParentLeft="true"
+                   android:id="@+id/img_driver_avatar"
+                   android:layout_centerInParent="true"
+                   android:paddingLeft="10dp"
+                   />
+
+
+               <LinearLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:orientation="vertical"
+                   android:layout_toRightOf="@+id/img_driver_avatar"
+                   android:paddingLeft="10dp"
+                   >
+
+                    <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tahsin D"
+                    android:id="@+id/txt_driver_name"
+                    android:textSize="14sp"
+                    android:textColor="@color/title_activity"
+                    />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="34 FC 1876"
+                        android:id="@+id/txt_driver_plaka"
+                        android:textSize="14sp"
+                        android:textColor="@color/title_activity"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Araba markası"
+                        android:id="@+id/txt_driver_brand"
+                        android:textSize="14sp"
+                        android:textColor="@color/title_activity"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Varış Zamanı : 20 dk"
+                        android:id="@+id/txt_driver_varis"
+                        android:textSize="14sp"
+                        android:textColor="@color/title_activity"
+                        />
+
+                     </LinearLayout>
+
+
+
+
+                   <ImageButton
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:id="@+id/imgbtn_driver_call"
+                       android:src="@drawable/driver_call"
+                       android:background="@null"
+                       android:layout_alignParentRight="true"
+                       android:layout_centerInParent="true"
+                       android:paddingRight="10dp"
+                       />
+
+            </RelativeLayout>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/driver_close"
+                android:background="@null"
+                android:layout_alignParentRight="true"
+                android:paddingRight="12dp"
+                android:layout_marginTop="-15dp"
+                />
+
+        </RelativeLayout>
 
     </FrameLayout>
 
