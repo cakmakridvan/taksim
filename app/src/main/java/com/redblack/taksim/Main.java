@@ -1,6 +1,7 @@
 package com.redblack.taksim;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +15,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -25,18 +25,18 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,10 +69,7 @@ import com.redblack.taksim.ui.activity.StartingLocation;
 import com.redblack.taksim.ui.activity.Yardim;
 import com.redblack.taksim.ui.activity.Yolculuklarim;
 import com.redblack.taksim.ui.interfaces.TaskLoadedCallback;
-import com.redblack.taksim.ui.logintype.MainType;
-import com.redblack.taksim.ui.logintype.login.LoginKod;
 import com.redblack.taksim.ui.logintype.server.Server;
-import com.redblack.taksim.ui.logintype.signup.SignUp;
 import com.redblack.taksim.ui.mapdirection.PointsParser;
 import com.redblack.taksim.ui.viewpager.ViewPager;
 import com.redblack.taksim.utils.GpsUtils;
@@ -89,9 +86,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -139,7 +134,7 @@ public class Main extends FragmentActivity
     private FetchURL fetchURL = null;
     private JSONArray jRoutes;
     private JSONArray jLegs;
-    private TextView txt_km,txt_duration,txt_price;
+    private TextView txt_km,txt_duration,txt_price,txt_driverName,txt_driverPlake,txt_driverBrand;
     private String getKm = "" , getDuration = "";
 
     private LinearLayout lytBottom,lytTop;
@@ -152,26 +147,24 @@ public class Main extends FragmentActivity
     private String get_token = "";
     private GetCars response_getCars;
     private ArrayList<ModelCars> car_list;
-    Timer timer,timer_orderTracking;
-    private ImageButton navMenu,btn_cancelOrder;
-    private ImageButton taksim_gelsin;
+    private Timer timer,timer_orderTracking;
+    private ImageButton navMenu;
+    private ImageButton taksim_gelsin,taksim_iptal;
     private CreateOrder createOrder = null;
     private String cityName;
     private ProgressDialog progressDialog,progressDialogCancelOrder;
     private CoordinatorLayout coordinatorLayout;
     private SweetAlertDialog sweetAlertDialog;
     private CancelOrder cancelOrder = null;
-    private Integer get_orderID = 0;
+    private Integer get_orderID = 0, order_state = 25;
     private Integer getNewOrder_id = 0;
     private GetOrderTracking getOrderTracking = null;
+    private RelativeLayout rltv_lyt_bottom_driver;
+    private Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //Remove title bar
-        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-      //Remove notification bar
-        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.main);
         sweetAlertDialog = new SweetAlertDialog(Main.this, SweetAlertDialog.WARNING_TYPE);
@@ -201,6 +194,12 @@ public class Main extends FragmentActivity
             //supportMapFragment.getMapAsync(Main.this);
             chaeck = true;
         }
+
+       //Define Visible bottom DriverLayout and driver variables
+        rltv_lyt_bottom_driver = findViewById(R.id.lyt_bottom_driver);
+        txt_driverName = findViewById(R.id.txt_driver_name);
+        txt_driverPlake = findViewById(R.id.txt_driver_plaka);
+        txt_driverBrand = findViewById(R.id.txt_driver_brand);
 
         //Initializa Paper
           Paper.init(Main.this);
@@ -244,9 +243,6 @@ public class Main extends FragmentActivity
                 drawer.openDrawer(Gravity.LEFT);
             }
         });
-
-        btn_cancelOrder = findViewById(R.id.cancelOrder);
-        btn_cancelOrder.setOnClickListener(Main.this);
 
         coordinatorLayout = findViewById(R.id.lyt_coordinator_main);
 
@@ -465,11 +461,16 @@ public class Main extends FragmentActivity
             edt_destination_address.setText(get_adres);
 
        //Show Invisible Layout at the bottom and top
-         lytBottom = findViewById(R.id.lyt_bottom);
-         lytBottom.setVisibility(View.VISIBLE);
+       if(order_state == 25) {
+           lytBottom = findViewById(R.id.lyt_bottom);
+           lytBottom.setVisibility(View.VISIBLE);
+       }
 
          taksim_gelsin = findViewById(R.id.imgbtn_taksim_gelsin);
          taksim_gelsin.setOnClickListener(Main.this);
+
+         taksim_iptal = findViewById(R.id.imgbtn_taksim_iptal);
+         taksim_iptal.setOnClickListener(Main.this);
 
 
       //Payments options layout visible
@@ -493,7 +494,7 @@ public class Main extends FragmentActivity
                 e.printStackTrace();
             }
             if(get_latitude == 0.0 && get_longitude == 0.0) {
-                //Updating Locations of near Taxi at evey 5 second
+              //Updating Locations of near Taxi at evey 5 second
                 timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
@@ -580,7 +581,7 @@ public class Main extends FragmentActivity
         }
         else if(id == R.id.exit){
 
-            //Stop taxi's update Location
+          //Stop taxi's update Location
             if(timer != null){
                 timer.cancel();
                 timer = null;
@@ -806,9 +807,7 @@ public class Main extends FragmentActivity
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.imgbtn_taksim_gelsin:
-
                 //Show taksim gelsin button
-
                     double startLat = 0.0 ,startLong = 0.0,  destLat = 0.0, destLon = 0.0;
                     String start_addrs = "", dest_adres = "";
 
@@ -864,19 +863,41 @@ public class Main extends FragmentActivity
 
                 break;
 
-            case R.id.cancelOrder:
+            case R.id.imgbtn_taksim_iptal:
 
-                get_orderID = Paper.book().read("orderID");
+                // custom dialog
+                dialog = new Dialog(Main.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); //before
+                dialog.setContentView(R.layout.custom_dialog_cancel_taxi);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-                try {
-                    jsonObject_cancel.put("orderId",get_orderID);
-                    jsonObject_cancel.put("reason",0);
-                    get_jsonCancel = jsonObject_cancel.toString();
-                }catch(JSONException e){
+                //Yes Action
+                ImageButton cancel_yes = (ImageButton) dialog.findViewById(R.id.imgbtn_cancel_yes);
+                cancel_yes.setOnClickListener((View) ->{
 
-                }
-                cancelOrder = new CancelOrder(get_jsonCancel,get_token);
-                cancelOrder.execute((Void) null);
+                //Cancel Order
+                    get_orderID = Paper.book().read("orderID");
+
+                    try {
+                        jsonObject_cancel.put("orderId",get_orderID);
+                        jsonObject_cancel.put("reason",0);
+                        get_jsonCancel = jsonObject_cancel.toString();
+                    }catch(JSONException e){
+
+                    }
+                    cancelOrder = new CancelOrder(get_jsonCancel,get_token);
+                    cancelOrder.execute((Void) null);
+
+                });
+                //No Action
+                ImageButton cancel_no = (ImageButton) dialog.findViewById(R.id.imgbtn_cancel_no);
+                cancel_no.setOnClickListener((View) ->{
+
+                    dialog.dismiss();
+                });
+
+
+                dialog.show();
 
                 break;
         }
@@ -939,9 +960,11 @@ public class Main extends FragmentActivity
             // Invokes the thread for parsing the JSON data
             parserTask.execute(s);
 
-            txt_km.setText(getKm);
-            txt_duration.setText(getDuration);
-            txt_price.setText(get_totalPrice);
+         if(order_state == 25) {
+             txt_km.setText(getKm);
+             txt_duration.setText(getDuration);
+             txt_price.setText(get_totalPrice);
+         }
 
         }
 
@@ -1130,7 +1153,7 @@ public class Main extends FragmentActivity
             if(get_resultError == 0){
 
               //Success Message
-                progressDialog.dismiss();
+                //progressDialog.dismiss();
                 //Save New OrderId to Paper
                 Paper.book().write("orderID",getNewOrder_id);
 
@@ -1235,8 +1258,10 @@ public class Main extends FragmentActivity
 
                 //Success Message
                 progressDialogCancelOrder.dismiss();
+                dialog.dismiss();
             }else{
                 progressDialogCancelOrder.dismiss();
+
             }
         }
 
@@ -1251,6 +1276,9 @@ public class Main extends FragmentActivity
 
         private final String json;
         private final String token;
+        private String getCar_no = "", cancel_reason = "", getDriver_mobile = "", getDriver_name = "", getDriver_photo = "";
+        private Integer order_status = 0, order_id = 0, payment = 0;
+        private double getCar_lat = 0.0, getCar_lon = 0.0;
 
         GetOrderTracking(String json,String token){
             this.json = json;
@@ -1267,41 +1295,40 @@ public class Main extends FragmentActivity
             try{
                 String getOrderTracking_result = Server.GetOrderTracking(json,token);
                 if(!getOrderTracking_result.trim().equalsIgnoreCase("false")){
-
-                    JSONObject jsonObject = new JSONObject(getOrderTracking_result);
-                    get_OrderTrackingError = jsonObject.getInt("errCode");
+                        JSONObject jsonObject = new JSONObject(getOrderTracking_result);
+                        get_OrderTrackingError = jsonObject.getInt("errCode");
                  //Order Status
                     if(jsonObject.getJSONObject("orderStatus") != null) {
                         JSONObject getOrder_status = jsonObject.getJSONObject("orderStatus");
-                        Integer order_status = getOrder_status.getInt("orderStatus");
-                        String cancel_reason = getOrder_status.getString("cancelReason");
-                        Integer order_id = getOrder_status.getInt("orderId");
-                        Integer payment = getOrder_status.getInt("payment");
+                        order_status = getOrder_status.getInt("orderStatus");
+                        cancel_reason = getOrder_status.getString("cancelReason");
+                        order_id = getOrder_status.getInt("orderId");
+                        payment = getOrder_status.getInt("payment");
                     }else{
                         get_OrderTrackingError = 15;
                     }
                  //Car Info
                     if(jsonObject.getJSONObject("carInfo") != null) {
                         JSONObject getCar_info = jsonObject.getJSONObject("carInfo");
-                        String getCar_no = getCar_info.getString("carNo");
-                        double getCar_lat = getCar_info.getDouble("lat");
-                        double getCar_lon = getCar_info.getDouble("lon");
+                        getCar_no = getCar_info.getString("carNo");
+                        getCar_lat = getCar_info.getDouble("lat");
+                        getCar_lon = getCar_info.getDouble("lon");
                     }else{
                         get_OrderTrackingError = 15;
                     }
                  //Driver Info
                     if(jsonObject.getJSONObject("driverInfo") != null) {
                         JSONObject getDriver_info = jsonObject.getJSONObject("driverInfo");
-                        String getDriver_mobile = getDriver_info.getString("driverMobile");
-                        String getDriver_name = getDriver_info.getString("driverName");
-                        String getDriver_photo = getDriver_info.getString("photo");
+                        getDriver_mobile = getDriver_info.getString("driverMobile");
+                        getDriver_name = getDriver_info.getString("driverName");
+                        getDriver_photo = getDriver_info.getString("photo");
                         Log.i("resultErrorCode", "" + get_OrderTrackingError);
                     }else{
                         get_OrderTrackingError = 15;
                     }
-                }else{
-                    get_OrderTrackingError = 15;
-                }
+                    }else{
+                        get_OrderTrackingError = 15;
+                    }
 
             }catch (Exception e){
                 Log.i("Exception",e.getMessage());
@@ -1315,8 +1342,31 @@ public class Main extends FragmentActivity
             super.onPostExecute(aBoolean);
 
             if(get_OrderTrackingError == 0){
-
                 //Success Message
+                if(order_status == 2){// 2:WaitingCars
+
+                }else if(order_status == 8 && order_state != 8){// 8:driver accepted the order dispatched
+                    progressDialog.dismiss();
+                    lytBottom.setVisibility(View.GONE);
+                    rltv_lyt_bottom_driver.setVisibility(View.VISIBLE);
+                    order_state = 8;
+
+                    txt_driverName.setText(getDriver_name);
+                    txt_driverPlake.setText(getCar_no);
+
+                }else if(order_status == 11){// 11:vehicle Cancel_Confirmed
+                    rltv_lyt_bottom_driver.setVisibility(View.GONE);
+                    order_state = 25;
+
+                 //Stop taxi's gettingOrder Tracking
+                    if(timer_orderTracking != null){
+                        timer_orderTracking.cancel();
+                        timer_orderTracking = null;
+                    }
+                }
+
+
+
             }else{
             }
         }

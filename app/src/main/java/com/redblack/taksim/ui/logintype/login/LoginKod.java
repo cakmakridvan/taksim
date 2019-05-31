@@ -175,12 +175,12 @@ public class LoginKod extends AppCompatActivity implements View.OnClickListener 
                         getMail = jsonObject_customerInfo.getString("email");
                         getNickName = jsonObject_customerInfo.getString("nickName");
                         userId = jsonObject_customerInfo.getString("userId");
-                        if(jsonObject.getJSONObject("currentOrder") != null) {
+/*                        if(jsonObject.getJSONObject("currentOrder") != null) {
                             JSONObject jsonObject_currentOrder = jsonObject.getJSONObject("currentOrder");
                             getNumber = jsonObject_currentOrder.getString("orderTel");
                             getOrderId = jsonObject_currentOrder.getInt("orderId");
 
-                        }
+                        }*/
                         Log.i("GetresultCode:","" + get_resultCode);
 
                     //get Token
